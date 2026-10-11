@@ -1,0 +1,168 @@
+---
+/**
+ * Sticky navigacija po kategorijama. Bez JS-a su to obični anchor linkovi;
+ * skripta dodaje scroll-spy (aria-current na aktivnoj) i centriranje aktivne pilule.
+ */
+interface Props {
+  label: string;
+  categories: Array<{ anchor: string; name: string }>;
+}
+
+const { label, categories } = Astro.props;
+---
+
+<nav class="category-nav" aria-label={label} data-category-nav>
+  <ul class="track">
+    {
+      categories.map(({ anchor, name }, i) => (
+        <li>
+          <a href={`#${anchor}`} data-anchor={anchor} aria-current={i === 0 ? 'true' : undefined}>
+            {name}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<script>
+  const nav = document.querySelector<HTMLElement>('[data-category-nav]');
+  const track = nav?.querySelector<HTMLElement>('.track');
+  const links = [...(nav?.querySelectorAll<HTMLAnchorElement>('a[data-anchor]') ?? [])];
+  const sections = links
+    .map((link) => document.getElementById(link.dataset.anchor ?? ''))
+    .filter((s): s is HTMLElement => s !== null);
+
+  if (nav && track && sections.length > 0) {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = '';
+    let lockedUntil = 0;
+
+    const setActive = (anchor: string) => {
+      if (anchor === current) return;
+      current = anchor;
+      for (const link of links) {
+        if (link.dataset.anchor === anchor) {
+          link.setAttribute('aria-current', 'true');
+          // Centriraj aktivnu pilulu unutar trake (radi i za RTL jer koristi razliku pozicija).
+          const linkBox = link.getBoundingClientRect();
+          const trackBox = track.getBoundingClientRect();
+          const delta = linkBox.left + linkBox.width / 2 - (trackBox.left + trackBox.width / 2);
+          track.scrollBy({ left: delta, behavior: reduceMotion ? 'auto' : 'smooth' });
+        } else {
+          link.removeAttribute('aria-current');
+        }
+      }
+    };
+
+    // Aktivna je posljednja sekcija čiji je vrh prešao donju ivicu sticky trake.
+    const update = () => {
+      if (performance.now() < lockedUntil) return;
+      const offset = nav.getBoundingClientRect().bottom + 24;
+      let active = sections[0]?.id ?? '';
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= offset) active = section.id;
+      }
+      // Na dnu stranice aktiviraj zadnju kategoriju (kratke zadnje sekcije nikad ne dođu do vrha).
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        active = sections.at(-1)?.id ?? active;
+      }
+      setActive(active);
+    };
+
+    let ticking = false;
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          update();
+          ticking = false;
+        });
+      },
+      { passive: true },
+    );
+
+    // Klik: odmah označi kliknutu kategoriju i ne diraj je dok glatki skrol ne završi
+    // (scrollend; timeout je rezerva za preglednike bez tog eventa).
+    const unlock = () => {
+      lockedUntil = 0;
+      update();
+    };
+    for (const link of links) {
+      link.addEventListener('click', () => {
+        setActive(link.dataset.anchor ?? '');
+        lockedUntil = performance.now() + 2000;
+        window.addEventListener('scrollend', unlock, { once: true });
+      });
+    }
+
+    update();
+  }
+</script>
+
+<style>
+  .category-nav {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 10;
+    background: color-mix(in oklab, var(--color-background) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .track {
+    display: flex;
+    gap: var(--space-2);
+    max-inline-size: var(--content-max);
+    margin-inline: auto;
+    padding: var(--space-2) var(--gutter);
+    list-style: none;
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    /* Blago izblijeđene ivice: znak da ima još kategorija. */
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black var(--gutter),
+      black calc(100% - var(--gutter)),
+      transparent 100%
+    );
+  }
+
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+
+  li {
+    flex: none;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration) var(--ease),
+      color var(--duration) var(--ease);
+  }
+
+  a:hover {
+    background: color-mix(in oklab, var(--color-text) 7%, transparent);
+  }
+
+  a[aria-current='true'] {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+</style>

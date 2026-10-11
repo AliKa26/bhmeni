@@ -1,0 +1,18 @@
+---
+/** Meni na default jeziku restorana. Ovo je URL u QR kodu: /<slug> */
+import type { GetStaticPaths } from 'astro';
+import MenuView from '../../components/menu/MenuView.astro';
+import { getActiveRestaurantsWithMenus, type RestaurantWithMenu } from '../../lib/restaurants';
+
+export const getStaticPaths = (async () => {
+  const entries = await getActiveRestaurantsWithMenus();
+  return entries.map(({ restaurant, menu }) => ({
+    params: { slug: restaurant.id },
+    props: { restaurant, menu } satisfies RestaurantWithMenu,
+  }));
+}) satisfies GetStaticPaths;
+
+const { restaurant, menu } = Astro.props;
+---
+
+<MenuView restaurant={restaurant} menu={menu} lang={restaurant.data.defaultLanguage} />

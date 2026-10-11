@@ -1,0 +1,278 @@
+---
+/**
+ * Jedno jelo. Trenutno je implementiran samo layout "cards" (slika gore);
+ * "list", "compact" i "photo-grid" dolaze u sljedećem koraku i do tada koriste cards.
+ * data-* atributi su tu za filtere u meniju (sljedeći korak).
+ */
+import { Image } from 'astro:assets';
+import type { Lang } from '../../config/site';
+import { formatPrice, localize, useTranslations } from '../../i18n/utils';
+import type { MenuItem as MenuItemData } from '../../lib/restaurants';
+
+interface TaxonomyEntry {
+  icon: string;
+  name: { bs: string } & Partial<Record<Lang, string>>;
+}
+
+interface Props {
+  item: MenuItemData;
+  lang: Lang;
+  currency: 'KM' | 'EUR';
+  tags: Map<string, TaxonomyEntry>;
+  allergens: Map<string, TaxonomyEntry>;
+}
+
+const { item, lang, currency, tags, allergens } = Astro.props;
+const t = useTranslations(lang);
+const name = localize(item.name, lang);
+const description = localize(item.description, lang);
+const itemTags = item.tags.flatMap((id) => {
+  const tag = tags.get(id);
+  return tag ? [{ id, icon: tag.icon, name: localize(tag.name, lang) }] : [];
+});
+const allergenNames = item.allergens.flatMap((id) => {
+  const allergen = allergens.get(id);
+  return allergen ? [localize(allergen.name, lang)] : [];
+});
+const initial = name.charAt(0);
+---
+
+<article
+  class:list={['item', 'item--cards', { 'is-unavailable': !item.available }]}
+  id={`jelo-${item.id}`}
+  data-item
+  data-tags={item.tags.join(' ')}
+  data-allergens={item.allergens.join(' ')}
+>
+  <div class="media">
+    {
+      item.image ? (
+        <Image
+          src={item.image}
+          alt={name}
+          widths={[320, 640]}
+          sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+          format="webp"
+          quality={74}
+          class="photo"
+        />
+      ) : (
+        <div class="placeholder" aria-hidden="true">
+          <span>{initial}</span>
+        </div>
+      )
+    }
+    {item.badge && <span class:list={['badge', `badge--${item.badge}`]}>{t(`badge.${item.badge}` as const)}</span>}
+  </div>
+
+  <div class="body">
+    <div class="title-row">
+      <h3 class="name">{name}</h3>
+      {item.price !== undefined && <p class="price">{formatPrice(item.price, currency, lang)}</p>}
+    </div>
+
+    <p class="description">{description}</p>
+
+    {
+      item.variants && (
+        <ul class="variants">
+          {item.variants.map((variant) => (
+            <li>
+              <span class="variant-label">{localize(variant.label, lang)}</span>
+              <span class="leader" aria-hidden="true" />
+              <span class="price">{formatPrice(variant.price, currency, lang)}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      itemTags.length > 0 && (
+        <ul class="tags">
+          {itemTags.map((tag) => (
+            <li class="tag">
+              <span aria-hidden="true">{tag.icon}</span>
+              {tag.name}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    {
+      allergenNames.length > 0 && (
+        <p class="allergens">
+          <span class="allergens-label">{t('allergens')}:</span> {allergenNames.join(', ')}
+        </p>
+      )
+    }
+
+    {!item.available && <p class="unavailable">{t('unavailable')}</p>}
+  </div>
+</article>
+
+<style>
+  .item {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-border),
+      var(--shadow-sm);
+  }
+
+  .media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface));
+  }
+
+  .photo {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    display: grid;
+    place-items: center;
+    block-size: 100%;
+    background:
+      radial-gradient(circle at 30% 25%, color-mix(in oklab, var(--color-accent) 22%, transparent), transparent 60%),
+      radial-gradient(circle at 75% 80%, color-mix(in oklab, var(--color-primary) 16%, transparent), transparent 55%),
+      color-mix(in oklab, var(--color-primary) 6%, var(--color-surface));
+  }
+
+  .placeholder span {
+    font-family: var(--font-heading);
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1;
+    color: color-mix(in oklab, var(--color-primary) 45%, var(--color-surface));
+  }
+
+  .badge {
+    position: absolute;
+    inset-block-start: var(--space-3);
+    inset-inline-start: var(--space-3);
+    padding: 0.3em 0.75em;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+  }
+
+  .badge--popular,
+  .badge--sale {
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-4) var(--space-5);
+  }
+
+  .title-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .name {
+    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
+  }
+
+  .price {
+    flex: none;
+    color: var(--color-primary);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .description {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .variants {
+    display: grid;
+    gap: var(--space-1);
+    margin-block-start: var(--space-1);
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+  }
+
+  .variants li {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .leader {
+    flex: 1;
+    min-inline-size: var(--space-4);
+    border-block-end: 2px dotted var(--color-border);
+    translate: 0 -0.25em;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin-block-start: var(--space-1);
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    padding: 0.2em 0.6em;
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--color-accent) 16%, var(--color-surface));
+    font-size: var(--text-xs);
+    font-weight: 500;
+  }
+
+  .allergens {
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+  }
+
+  .allergens-label {
+    font-weight: 600;
+  }
+
+  .is-unavailable .media,
+  .is-unavailable .title-row,
+  .is-unavailable .description,
+  .is-unavailable .variants {
+    opacity: 0.5;
+  }
+
+  .is-unavailable .photo {
+    filter: grayscale(1);
+  }
+
+  .unavailable {
+    align-self: flex-start;
+    padding: 0.2em 0.6em;
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--color-text) 8%, transparent);
+    font-size: var(--text-xs);
+    font-weight: 600;
+  }
+</style>

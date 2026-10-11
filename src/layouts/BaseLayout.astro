@@ -9,6 +9,7 @@ import '../styles/base.css';
 import { DEFAULT_LANG, LANGUAGES, SITE_NAME, type Lang } from '../config/site';
 import { BRAND_FONTS, type FontId } from '../config/themes';
 import { fontFaceCss, fontPreloadUrl } from '../lib/fonts';
+import { t } from '../i18n/utils';
 
 interface Props {
   title: string;
@@ -18,6 +19,12 @@ interface Props {
   fonts?: readonly FontId[];
   /** Inline CSS varijable na <body> (tema restorana). */
   bodyStyle?: string;
+  bodyClass?: string;
+  /** false = naslov bez " · BHMeni" (meniji: brend je skoro nevidljiv). */
+  brandInTitle?: boolean;
+  /** <meta name="theme-color"> (boja trake preglednika na mobitelu). */
+  themeColor?: string;
+  colorScheme?: 'light' | 'dark';
   noindex?: boolean;
 }
 
@@ -27,17 +34,21 @@ const {
   lang = DEFAULT_LANG,
   fonts = [BRAND_FONTS.heading, BRAND_FONTS.body],
   bodyStyle,
+  bodyClass,
+  brandInTitle = true,
+  themeColor,
+  colorScheme = 'light',
   noindex = false,
 } = Astro.props;
 
 const { dir } = LANGUAGES[lang];
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const fullTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
+const fullTitle = !brandInTitle || title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
 const [preloadFont] = fonts;
 ---
 
 <!doctype html>
-<html lang={lang} dir={dir}>
+<html lang={lang} dir={dir} style={`color-scheme:${colorScheme}`}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -47,12 +58,13 @@ const [preloadFont] = fonts;
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    {themeColor && <meta name="theme-color" content={themeColor} />}
     {preloadFont && <link rel="preload" href={fontPreloadUrl(preloadFont)} as="font" type="font/woff2" crossorigin />}
     <style is:inline set:html={fontFaceCss(fonts)} />
     <slot name="head" />
   </head>
-  <body style={bodyStyle}>
-    <a class="skip-link" href="#main">Preskoči na sadržaj</a>
+  <body style={bodyStyle} class={bodyClass}>
+    <a class="skip-link" href="#main">{t(lang, 'skipToContent')}</a>
     <slot />
   </body>
 </html>

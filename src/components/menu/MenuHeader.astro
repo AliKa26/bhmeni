@@ -1,0 +1,318 @@
+---
+import { Image } from 'astro:assets';
+import Icon from '../Icon.astro';
+import { LANGUAGES, type Lang } from '../../config/site';
+import { localize, useTranslations } from '../../i18n/utils';
+import { buildWeekSchedule } from '../../lib/hours';
+import type { Restaurant } from '../../lib/restaurants';
+import { menuUrl } from '../../lib/urls';
+
+interface Props {
+  restaurant: Restaurant;
+  lang: Lang;
+  /** id popover elementa s informacijama. */
+  infoSheetId: string;
+}
+
+const { restaurant, lang, infoSheetId } = Astro.props;
+const r = restaurant.data;
+const t = useTranslations(lang);
+const headerStyle = r.theme.header === 'cover' && r.cover ? 'cover' : r.theme.header === 'minimal' ? 'minimal' : 'logo';
+const schedule = buildWeekSchedule(r.workingHours);
+const hasSchedule = schedule.some((day) => day !== undefined);
+---
+
+<header class:list={['menu-header', `menu-header--${headerStyle}`]}>
+  {
+    headerStyle === 'cover' && r.cover && (
+      <div class="cover">
+        <Image
+          src={r.cover}
+          alt=""
+          widths={[640, 1024, 1600]}
+          sizes="100vw"
+          format="webp"
+          quality={72}
+          loading="eager"
+          fetchpriority="high"
+          class="cover-img"
+        />
+      </div>
+    )
+  }
+
+  <div class="intro">
+    {
+      headerStyle !== 'minimal' && r.logo && (
+        <Image src={r.logo} alt={r.name} width={88} densities={[1, 2]} format="webp" class="logo" loading="eager" />
+      )
+    }
+    <h1 class="name">{r.name}</h1>
+    <p class="description">{localize(r.description, lang)}</p>
+
+    {
+      hasSchedule && (
+        <p
+          class="status"
+          data-status
+          data-schedule={JSON.stringify(schedule.map((day) => day?.map(({ open, close }) => [open, close]) ?? null))}
+          data-t-open={t('statusOpenUntil')}
+          data-t-opens={t('statusOpensAt')}
+          data-t-closed={t('statusClosed')}
+          aria-live="polite"
+        >
+          <span class="status-dot" aria-hidden="true" />
+          <span data-status-text>&nbsp;</span>
+        </p>
+      )
+    }
+
+    <div class="actions">
+      <button class="action-btn" type="button" popovertarget={infoSheetId}>
+        <Icon name="info" size={18} />
+        {t('info')}
+      </button>
+
+      {
+        r.languages.length > 1 && (
+          <nav class="langs" aria-label={t('language')}>
+            <Icon name="language" size={18} class="langs-icon" />
+            <ul>
+              {r.languages.map((code) => (
+                <li>
+                  <a
+                    href={menuUrl(restaurant.id, code, r.defaultLanguage)}
+                    hreflang={code}
+                    lang={code}
+                    aria-current={code === lang ? 'page' : undefined}
+                    title={LANGUAGES[code].label}
+                  >
+                    {code.toUpperCase()}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </div>
+  </div>
+</header>
+
+<script>
+  // Status "Otvoreno/Zatvoreno" računa se na klijentu, po vremenu u Sarajevu.
+  const el = document.querySelector<HTMLElement>('[data-status]');
+  if (el) {
+    type Range = [number, number];
+    const schedule = JSON.parse(el.dataset.schedule ?? '[]') as Array<Range[] | null>;
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Sarajevo',
+      weekday: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(new Date());
+    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
+    const day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(get('weekday'));
+    const now = Number(get('hour')) * 60 + Number(get('minute'));
+    const fmt = (m: number) => {
+      const v = m % 1440;
+      return `${String(Math.floor(v / 60)).padStart(2, '0')}:${String(v % 60).padStart(2, '0')}`;
+    };
+
+    let openUntil: number | undefined;
+    // Danas: interval koji je u toku (zatvaranje iza ponoći se računa kao +24h).
+    for (const [open, close] of schedule[day] ?? []) {
+      const end = close <= open ? close + 1440 : close;
+      if (now >= open && now < end) openUntil = close;
+    }
+    // Jučerašnji interval koji traje iza ponoći.
+    for (const [open, close] of schedule[(day + 6) % 7] ?? []) {
+      if (close <= open && now < close) openUntil = close;
+    }
+    const nextToday = (schedule[day] ?? []).map(([open]) => open).find((open) => open > now);
+
+    const text = el.querySelector<HTMLElement>('[data-status-text]');
+    if (text && day >= 0) {
+      if (openUntil !== undefined) {
+        el.dataset.state = 'open';
+        text.textContent = (el.dataset.tOpen ?? '').replace('{time}', fmt(openUntil));
+      } else if (nextToday !== undefined) {
+        el.dataset.state = 'closed';
+        text.textContent = (el.dataset.tOpens ?? '').replace('{time}', fmt(nextToday));
+      } else {
+        el.dataset.state = 'closed';
+        text.textContent = el.dataset.tClosed ?? '';
+      }
+    }
+  }
+</script>
+
+<style>
+  .menu-header {
+    background: var(--color-background);
+  }
+
+  .cover {
+    position: relative;
+    block-size: clamp(180px, 46vw, 380px);
+    overflow: hidden;
+    background: color-mix(in oklab, var(--color-primary) 35%, var(--color-text));
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 45%, rgb(0 0 0 / 0.35));
+  }
+
+  .cover-img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  .intro {
+    position: relative;
+    display: grid;
+    justify-items: start;
+    gap: var(--space-3);
+    max-inline-size: var(--content-max);
+    margin-inline: auto;
+    padding: var(--space-5) var(--gutter) var(--space-5);
+  }
+
+  .menu-header--cover .intro {
+    padding-block-start: var(--space-2);
+  }
+
+  .logo {
+    inline-size: 88px;
+    block-size: 88px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-surface);
+    border: 4px solid var(--color-background);
+    box-shadow: var(--shadow-md);
+  }
+
+  .menu-header--cover .logo {
+    margin-block-start: calc(-44px - var(--space-2));
+  }
+
+  .name {
+    font-size: var(--text-3xl);
+    letter-spacing: -0.02em;
+  }
+
+  .description {
+    max-inline-size: 52ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: 1.75rem;
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-pill);
+    background: color-mix(in oklab, var(--color-text) 6%, transparent);
+    font-size: var(--text-sm);
+    font-weight: 500;
+  }
+
+  .status:not([data-state]) {
+    visibility: hidden;
+  }
+
+  .status-dot {
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .status[data-state='open'] .status-dot {
+    background: #1f9d55;
+    box-shadow: 0 0 0 3px color-mix(in oklab, #1f9d55 25%, transparent);
+  }
+
+  .status[data-state='closed'] .status-dot {
+    background: #d64545;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    margin-block-start: var(--space-1);
+  }
+
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-block-size: var(--tap-min);
+    padding-inline: var(--space-4) var(--space-5);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-weight: 600;
+    transition: transform var(--duration) var(--ease);
+  }
+
+  .action-btn:active {
+    transform: scale(0.97);
+  }
+
+  .langs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    color: var(--color-text-muted);
+  }
+
+  .langs ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+  }
+
+  .langs a {
+    display: inline-grid;
+    place-items: center;
+    min-inline-size: var(--tap-min);
+    min-block-size: var(--tap-min);
+    border-radius: var(--radius-pill);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .langs a[aria-current='page'] {
+    color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.35em;
+  }
+
+  @media (min-width: 640px) {
+    .logo {
+      inline-size: 104px;
+      block-size: 104px;
+    }
+
+    .menu-header--cover .logo {
+      margin-block-start: calc(-52px - var(--space-2));
+    }
+  }
+</style>

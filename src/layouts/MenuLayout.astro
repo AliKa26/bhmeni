@@ -1,0 +1,32 @@
+---
+/** Layout stranice menija: tema restorana kao CSS varijable + samo fontovi koje restoran koristi. */
+import '../styles/menu.css';
+import BaseLayout from './BaseLayout.astro';
+import type { Lang } from '../config/site';
+import { localize, t } from '../i18n/utils';
+import type { Restaurant } from '../lib/restaurants';
+import { isDarkTheme, resolveColors, themeStyle } from '../lib/theme';
+
+interface Props {
+  restaurant: Restaurant;
+  lang: Lang;
+}
+
+const { restaurant, lang } = Astro.props;
+const r = restaurant.data;
+const dark = isDarkTheme(r.theme);
+---
+
+<BaseLayout
+  title={`${r.name} · ${t(lang, 'menu')}`}
+  description={localize(r.description, lang)}
+  lang={lang}
+  fonts={[r.theme.fonts.heading, r.theme.fonts.body]}
+  bodyStyle={themeStyle(r.theme)}
+  bodyClass={dark ? 'menu-page is-dark' : 'menu-page'}
+  brandInTitle={false}
+  themeColor={resolveColors(r.theme).background}
+  colorScheme={dark ? 'dark' : 'light'}
+>
+  <slot />
+</BaseLayout>

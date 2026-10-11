@@ -1,0 +1,15 @@
+/*
+ * Stranica menija. Osnovne boje/fontovi dolaze inline iz teme restorana (src/lib/theme.ts);
+ * ovdje se iz njih izvode pomoćne nijanse, tako da svaka tema automatski dobije usklađene tonove.
+ */
+body.menu-page {
+  --color-text-muted: color-mix(in oklab, var(--color-text) 70%, var(--color-background));
+  --color-border: color-mix(in oklab, var(--color-text) 12%, var(--color-background));
+  --color-focus: var(--color-primary);
+}
+
+body.menu-page.is-dark {
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 6px 20px -6px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 18px 48px -12px rgb(0 0 0 / 0.7);
+}

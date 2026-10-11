@@ -1,0 +1,22 @@
+---
+/** Meni na ostalim jezicima restorana: /<slug>/<lang> (default jezik je samo na /<slug>). */
+import type { GetStaticPaths } from 'astro';
+import MenuView from '../../components/menu/MenuView.astro';
+import { getActiveRestaurantsWithMenus } from '../../lib/restaurants';
+
+export const getStaticPaths = (async () => {
+  const entries = await getActiveRestaurantsWithMenus();
+  return entries.flatMap(({ restaurant, menu }) =>
+    restaurant.data.languages
+      .filter((lang) => lang !== restaurant.data.defaultLanguage)
+      .map((lang) => ({
+        params: { slug: restaurant.id, lang },
+        props: { restaurant, menu, lang },
+      })),
+  );
+}) satisfies GetStaticPaths;
+
+const { restaurant, menu, lang } = Astro.props;
+---
+
+<MenuView restaurant={restaurant} menu={menu} lang={lang} />

@@ -87,3 +87,23 @@ export function parseHours(input: string): TimeRange[] | null {
   }
   return ranges;
 }
+
+export interface WorkingHoursEntry {
+  days: string;
+  hours: string;
+}
+
+/**
+ * Raspored po danima (indeks 0 = ponedjeljak). Kasniji unos za isti dan prepisuje raniji.
+ * `undefined` = za taj dan nema podatka; `[]` = zatvoreno.
+ */
+export function buildWeekSchedule(entries: readonly WorkingHoursEntry[]): Array<TimeRange[] | undefined> {
+  const week: Array<TimeRange[] | undefined> = Array.from({ length: 7 }, () => undefined);
+  for (const entry of entries) {
+    const days = parseDays(entry.days);
+    const ranges = parseHours(entry.hours);
+    if (!days || !ranges) continue; // šema ovo već odbija
+    for (const day of days) week[day] = ranges;
+  }
+  return week;
+}

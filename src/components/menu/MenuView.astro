@@ -1,0 +1,123 @@
+---
+/** Cijela stranica menija za jedan restoran i jezik (dijele je [slug]/index i [slug]/[lang]). */
+import MenuLayout from '../../layouts/MenuLayout.astro';
+import CategoryNav from './CategoryNav.astro';
+import InfoSheet from './InfoSheet.astro';
+import MenuFooter from './MenuFooter.astro';
+import MenuHeader from './MenuHeader.astro';
+import MenuItem from './MenuItem.astro';
+import { UNAVAILABLE_ITEMS, type Lang } from '../../config/site';
+import { localize, localizeOptional, t } from '../../i18n/utils';
+import { getTaxonomies, type Menu, type Restaurant } from '../../lib/restaurants';
+
+interface Props {
+  restaurant: Restaurant;
+  menu: Menu;
+  lang: Lang;
+}
+
+const { restaurant, menu, lang } = Astro.props;
+const r = restaurant.data;
+const { tags, allergens } = await getTaxonomies();
+const infoSheetId = 'info';
+
+const categories = menu.data.categories
+  .map((category) => ({
+    anchor: `kat-${category.id}`,
+    name: localize(category.name, lang),
+    description: localizeOptional(category.description, lang),
+    items: category.items.filter((item) => item.available || UNAVAILABLE_ITEMS === 'show'),
+  }))
+  .filter((category) => category.items.length > 0);
+---
+
+<MenuLayout restaurant={restaurant} lang={lang}>
+  <MenuHeader restaurant={restaurant} lang={lang} infoSheetId={infoSheetId} />
+  <CategoryNav label={t(lang, 'categories')} categories={categories} />
+
+  <main id="main" class="menu" data-layout={r.theme.layout}>
+    {
+      categories.map((category) => (
+        <section class="category" id={category.anchor} aria-labelledby={`${category.anchor}-h`}>
+          <header class="category-head">
+            <h2 id={`${category.anchor}-h`}>{category.name}</h2>
+            {category.description && <p>{category.description}</p>}
+          </header>
+          <div class="grid">
+            {category.items.map((item) => (
+              <MenuItem item={item} lang={lang} currency={r.currency} tags={tags} allergens={allergens} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </main>
+
+  <MenuFooter lang={lang} showPoweredBy={r.showPoweredBy} />
+  <InfoSheet id={infoSheetId} restaurant={restaurant} lang={lang} />
+</MenuLayout>
+
+<style>
+  .menu {
+    display: grid;
+    gap: var(--space-7);
+    max-inline-size: var(--content-max);
+    margin-inline: auto;
+    padding: var(--space-6) var(--gutter) var(--space-4);
+  }
+
+  .category {
+    /* Visina sticky navigacije + razmak, da naslov ne završi ispod trake. */
+    scroll-margin-block-start: calc(var(--tap-min) + var(--space-6));
+  }
+
+  .category-head {
+    display: grid;
+    gap: var(--space-1);
+    margin-block-end: var(--space-4);
+  }
+
+  .category-head h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    font-size: var(--text-2xl);
+    letter-spacing: -0.015em;
+  }
+
+  .category-head h2::after {
+    content: '';
+    flex: 1;
+    block-size: 2px;
+    border-radius: 2px;
+    background: linear-gradient(to var(--line-dir, right), var(--color-accent), transparent);
+  }
+
+  :global([dir='rtl']) .category-head h2::after {
+    --line-dir: left;
+  }
+
+  .category-head p {
+    max-inline-size: 60ch;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .grid {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 640px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-5);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

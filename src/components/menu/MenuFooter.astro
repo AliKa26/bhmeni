@@ -1,0 +1,47 @@
+---
+import { SITE_NAME, type Lang } from '../../config/site';
+import { useTranslations } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  showPoweredBy: boolean;
+}
+
+const { lang, showPoweredBy } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="menu-footer">
+  <a href="/">{t('allRestaurants')}</a>
+  {
+    showPoweredBy && (
+      <p>
+        {t('poweredBy')} <a href="/" class="brand">{SITE_NAME}</a>
+      </p>
+    )
+  }
+</footer>
+
+<style>
+  .menu-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2) var(--space-5);
+    padding: var(--space-6) var(--gutter) calc(var(--space-6) + env(safe-area-inset-bottom));
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--tap-min);
+    color: inherit;
+  }
+
+  .brand {
+    font-weight: 600;
+  }
+</style>
