@@ -1,0 +1,46 @@
+{
+  "name": "Neretva Terasa",
+  "active": true,
+  "listed": true,
+  "featured": false,
+  "city": "mostar",
+  "categories": ["restoran", "riblji-restoran", "mediteranska"],
+  "description": {
+    "bs": "Hercegovačka kuhinja i riba iz Neretve, uz čašu žilavke na terasi iznad rijeke.",
+    "en": "Herzegovinian cuisine and Neretva river fish, with a glass of Žilavka on a terrace above the river.",
+    "de": "Herzegowinische Küche und Fisch aus der Neretva, dazu ein Glas Žilavka auf der Terrasse über dem Fluss.",
+    "it": "Cucina dell'Erzegovina e pesce della Neretva, con un calice di Žilavka sulla terrazza sopra il fiume."
+  },
+  "logo": "./images/logo.png",
+  "cover": "./images/cover.jpg",
+  "address": "Onešćukova 10, 88000 Mostar",
+  "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=43.3370,17.8150",
+  "coordinates": { "lat": 43.337, "lng": 17.815 },
+  "phone": "+387 36 000 002",
+  "email": "rezervacije@example.ba",
+  "website": "https://example.ba",
+  "socials": {
+    "instagram": "https://www.instagram.com/example",
+    "facebook": "https://www.facebook.com/example",
+    "tiktok": "",
+    "tripadvisor": "https://www.tripadvisor.com/"
+  },
+  "workingHours": [
+    { "days": "Pon", "hours": "Zatvoreno" },
+    { "days": "Uto–Ned", "hours": "12:00–16:00, 18:00–23:30" }
+  ],
+  "languages": ["bs", "en", "de", "it"],
+  "defaultLanguage": "bs",
+  "currency": "KM",
+  "priceLevel": 3,
+  "theme": {
+    "preset": "classic",
+    "colors": { "accent": "#B8892F" },
+    "fonts": { "heading": "lora", "body": "dm-sans" },
+    "layout": "list",
+    "radius": "sm",
+    "header": "cover"
+  },
+  "showPoweredBy": true,
+  "updatedAt": "2026-10-11"
+}

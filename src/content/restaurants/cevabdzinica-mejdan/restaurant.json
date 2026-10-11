@@ -1,0 +1,47 @@
+{
+  "name": "Ćevabdžinica Mejdan",
+  "active": true,
+  "listed": true,
+  "featured": true,
+  "city": "sarajevo",
+  "categories": ["cevabdzinica", "domaca-kuhinja"],
+  "description": {
+    "bs": "Ćevapi s ugljena, somun iz krušne peći i begova čorba kakvu kuha nana.",
+    "en": "Charcoal-grilled ćevapi, somun bread from a wood-fired oven and a bey's soup like grandma makes.",
+    "de": "Ćevapi vom Holzkohlegrill, Somun aus dem Holzofen und Begova-Suppe wie bei Oma.",
+    "tr": "Kömürde ćevapi, taş fırından somun ve ev usulü bey çorbası.",
+    "ar": "تشيفابي مشوية على الفحم، خبز صامون من فرن الحطب، وحساء البيك كما تطبخه الجدة."
+  },
+  "logo": "./images/logo.png",
+  "cover": "./images/cover.jpg",
+  "address": "Ferhadija 1, 71000 Sarajevo",
+  "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=43.8590,18.4290",
+  "coordinates": { "lat": 43.859, "lng": 18.429 },
+  "phone": "+387 33 000 001",
+  "email": "",
+  "website": "",
+  "socials": {
+    "instagram": "https://www.instagram.com/example",
+    "facebook": "",
+    "tiktok": "",
+    "tripadvisor": ""
+  },
+  "workingHours": [
+    { "days": "Pon–Sub", "hours": "08:00–23:00" },
+    { "days": "Ned", "hours": "10:00–22:00" }
+  ],
+  "languages": ["bs", "en", "de", "tr", "ar"],
+  "defaultLanguage": "bs",
+  "currency": "KM",
+  "priceLevel": 1,
+  "theme": {
+    "preset": "warm",
+    "colors": {},
+    "fonts": { "heading": "playfair-display", "body": "inter" },
+    "layout": "cards",
+    "radius": "lg",
+    "header": "cover"
+  },
+  "showPoweredBy": true,
+  "updatedAt": "2026-10-11"
+}

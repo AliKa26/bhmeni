@@ -1,0 +1,21 @@
+[
+  { "id": "cevabdzinica", "name": { "bs": "Ćevabdžinica", "en": "Ćevapi grill", "de": "Ćevapi-Grill", "tr": "Köfteci", "ar": "مطعم تشيفابي", "it": "Ćevapi grill" } },
+  { "id": "buregdzinica", "name": { "bs": "Buregdžinica", "en": "Burek bakery", "de": "Burek-Bäckerei", "tr": "Börekçi", "ar": "مخبز البوريك", "it": "Burek" } },
+  { "id": "ascinica", "name": { "bs": "Aščinica", "en": "Traditional eatery", "de": "Traditionelle Garküche", "tr": "Esnaf lokantası", "ar": "مطعم تقليدي", "it": "Trattoria tradizionale" } },
+  { "id": "domaca-kuhinja", "name": { "bs": "Domaća kuhinja", "en": "Home-style cooking", "de": "Hausmannskost", "tr": "Ev yemekleri", "ar": "مطبخ منزلي", "it": "Cucina casalinga" } },
+  { "id": "restoran", "name": { "bs": "Restoran", "en": "Restaurant", "de": "Restaurant", "tr": "Restoran", "ar": "مطعم", "it": "Ristorante" } },
+  { "id": "rostilj", "name": { "bs": "Roštilj", "en": "Grill", "de": "Grill", "tr": "Izgara", "ar": "مشويات", "it": "Griglieria" } },
+  { "id": "riblji-restoran", "name": { "bs": "Riblji restoran", "en": "Seafood", "de": "Fischrestaurant", "tr": "Balık restoranı", "ar": "مأكولات بحرية", "it": "Ristorante di pesce" } },
+  { "id": "mediteranska", "name": { "bs": "Mediteranska kuhinja", "en": "Mediterranean", "de": "Mediterran", "tr": "Akdeniz mutfağı", "ar": "مطبخ متوسطي", "it": "Mediterranea" } },
+  { "id": "pizzeria", "name": { "bs": "Picerija", "en": "Pizzeria", "de": "Pizzeria", "tr": "Pizzacı", "ar": "بيتزا", "it": "Pizzeria" } },
+  { "id": "italijanska", "name": { "bs": "Italijanska kuhinja", "en": "Italian", "de": "Italienisch", "tr": "İtalyan mutfağı", "ar": "مطبخ إيطالي", "it": "Cucina italiana" } },
+  { "id": "azijska", "name": { "bs": "Azijska kuhinja", "en": "Asian", "de": "Asiatisch", "tr": "Asya mutfağı", "ar": "مطبخ آسيوي", "it": "Cucina asiatica" } },
+  { "id": "vegetarijanska", "name": { "bs": "Vegetarijanska", "en": "Vegetarian", "de": "Vegetarisch", "tr": "Vejetaryen", "ar": "نباتي", "it": "Vegetariana" } },
+  { "id": "brza-hrana", "name": { "bs": "Brza hrana", "en": "Fast food", "de": "Fast Food", "tr": "Fast food", "ar": "وجبات سريعة", "it": "Fast food" } },
+  { "id": "dorucak-brunch", "name": { "bs": "Doručak i brunch", "en": "Breakfast & brunch", "de": "Frühstück & Brunch", "tr": "Kahvaltı ve brunch", "ar": "فطور وبرانش", "it": "Colazione e brunch" } },
+  { "id": "kafic", "name": { "bs": "Kafić", "en": "Café", "de": "Café", "tr": "Kafe", "ar": "مقهى", "it": "Caffetteria" } },
+  { "id": "poslasticarnica", "name": { "bs": "Poslastičarnica", "en": "Pastry shop", "de": "Konditorei", "tr": "Pastane", "ar": "محل حلويات", "it": "Pasticceria" } },
+  { "id": "pekara", "name": { "bs": "Pekara", "en": "Bakery", "de": "Bäckerei", "tr": "Fırın", "ar": "مخبز", "it": "Panetteria" } },
+  { "id": "bar", "name": { "bs": "Bar", "en": "Bar", "de": "Bar", "tr": "Bar", "ar": "بار", "it": "Bar" } },
+  { "id": "pivnica", "name": { "bs": "Pivnica", "en": "Pub", "de": "Bierlokal", "tr": "Birahane", "ar": "حانة", "it": "Birreria" } }
+]

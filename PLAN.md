@@ -30,11 +30,13 @@ Bez backenda, bez baze, bez panela za restorane. Sve podatke održava jedna osob
 | Fontovi | `@fontsource-variable/*`, self-hosted, **`latin-ext` subset obavezan** (č ć š đ ž) | Bez Google Fonts zahtjeva, `font-display: swap` |
 | QR | `qrcode` (npm) | SVG + PNG za štampu |
 | SEO | `@astrojs/sitemap`, JSON-LD | |
-| Hosting | **GitHub → Cloudflare Pages** (auto-deploy na push u `main`), privremena adresa `ime-projekta.pages.dev` | Besplatno, neograničen bandwidth, komercijalna upotreba dozvoljena (provjeriti Cloudflare uslove prije naplate restoranima) |
+| Hosting | **GitHub → Cloudflare Workers (static assets)**, auto-deploy na push u `main` (Workers Builds), privremena adresa `<ime>.<subdomena>.workers.dev` | Zahtjevi za statičke fajlove su besplatni i neograničeni. Komercijalna upotreba je dozvoljena prema trećim izvorima, a prije naplate restoranima provjeriti Cloudflare uslove |
 
 > **Statički sajt = bez adaptera.** Ne instalirati `@astrojs/cloudflare` adapter niti koristiti `npm create cloudflare` sa SSR-om. Adapter treba samo za server rendering. Cloudflare dokumentacija za Astro opisuje SSR varijantu, ali nama ne treba.
 
-> **Limiti Cloudflare free plana (provjereno u dokumentaciji):** 500 buildova mjesečno (jedan build istovremeno, timeout 20 min), **najviše 20.000 fajlova po sajtu**, najviše 25 MiB po fajlu. Svaka optimizirana slika je poseban fajl, pa pazi na broj varijanti (vidi 6.2). Cloudflare sve više vodi korisnike prema Workers (static assets). Pri postavljanju provjeriti da li je Pages još preporučena opcija. Za statički `dist/` obje rade.
+> **Limiti Cloudflare free plana (provjereno u dokumentaciji):** **najviše 20.000 fajlova po verziji** (paid: 100.000) i najviše 25 MiB po fajlu. Svaka optimizirana slika je poseban fajl, pa pazi na broj varijanti (vidi 6.2). Limit broja buildova mjesečno za Workers Builds nije potvrđen, provjeriti u dokumentaciji pri Fazi 8 (za Pages je bio 500).
+
+> **Workers, ne Pages:** Cloudflare je projekat napravio kao Worker sa static assets. Koristi se `wrangler.jsonc` s `assets.directory: ./dist`, bez polja `main` (nema Worker koda) i bez Astro adaptera.
 
 ## 3. Struktura repozitorija
 
@@ -248,7 +250,7 @@ Rješenje, tri sloja:
 - **CSS:** inline kritični (Astro to radi sa scoped stilovima), tema kao CSS varijable inline na `<body>`.
 - **Build vrijeme:** optimizacija slika (sharp) je najsporiji dio. U Fazi 7 se mjeri build s 100 lažnih restorana. Ako je prespor, opcije: (a) kompresovati slike prije commita (validate skripta upozorava na fajlove > 1,5 MB), (b) smanjiti broj generisanih varijanti slika, (c) obrisati ili isključiti (`active: false`) neaktivne restorane.
 - **Broj fajlova u `dist/` (limit Cloudflare free: 20.000):** u Fazi 7 prebrojati fajlove (`find dist -type f | wc -l`). Primjer procjene: 100 restorana × 60 jela × 2 veličine slike je oko 12.000 fajlova samo za slike. Mjere: jedna veličina slike jela (npr. 320w) umjesto dvije, samo jedan format (WebP), bez zasebnih varijanti za `ar`/`de` (slike su iste). Ako se limit približi, validate skripta upozorava na 15.000+.
-- **Keširanje:** hash-irani `/_astro/*` fajlovi se kešuju dugoročno; HTML kratko (Cloudflare Pages default).
+- **Keširanje:** hash-irani `/_astro/*` fajlovi se kešuju dugoročno; HTML kratko (Cloudflare default).
 - Bez trackera i bez eksternih skripti.
 
 ## 7. Alati za rad (skripte)
@@ -264,7 +266,7 @@ Pokreće `astro check` + dodatne provjere: duplikati ID-eva jela, nedostajući p
 
 ### `npm run qr -- <slug | --all>`
 Generiše `qr/<slug>.svg` i `qr/<slug>.png` (visoka rezolucija, error correction **M**, dovoljan quiet zone). URL = `${SITE_URL}/<slug>?src=qr`. Opcionalno: logo u sredini (tada ECC **H**) i printabilna A6 "table tent" HTML stranica.
-> **VAŽNO: ne štampati QR kodove dok domena nije konačna.** QR kodovi sadrže URL, a odštampani se ne mogu promijeniti. Za testiranje koristi pages.dev adresu, a za štampu tek finalnu domenu. Slug restorana se nikad ne mijenja nakon štampe.
+> **VAŽNO: ne štampati QR kodove dok domena nije konačna.** QR kodovi sadrže URL, a odštampani se ne mogu promijeniti. Za testiranje koristi workers.dev adresu, a za štampu tek finalnu domenu. Slug restorana se nikad ne mijenja nakon štampe.
 
 ### `npm run import-menu -- <slug> menu.csv` (opcionalno)
 Brzi prvi unos menija iz Excel/CSV tabele (kolone: `kategorija_bs, naziv_bs, opis_bs, cijena, tagovi, alergeni, naziv_en, opis_en...`) u `menu.json`. Ubrzava dodavanje novog restorana s 80 jela.
@@ -278,7 +280,7 @@ Generiše N lažnih restorana (u `src/content/restaurants/_fake-*`, u `.gitignor
 - **Mobitel:** **Pages CMS** (pagescms.org, besplatan, piše direktno u GitHub repo, bez servera). `.pages.yml` mapira `restaurant.json` i `menu.json` u forme (polja, dropdown za grad/kategorije/tagove, upload slika). Prijava je samo tvoj GitHub nalog. *Provjeriti trenutnu dokumentaciju za sintaksu `.pages.yml` prije implementacije.* Alternativa: GitHub mobilna aplikacija / `github.dev` (bez forme, veći rizik greške).
 - **Tok izmjene cijene:** vlasnik pošalje poruku → otvoriš Pages CMS → promijeniš cijenu → Save (commit) → Cloudflare build → live za otprilike 1-2 min (procjena, izmjeriti).
 - **Zaštita:** build pada na nevalidnom JSON-u pa stara verzija ostaje live. Vraćanje na prethodnu verziju je `git revert` ili rollback na prethodni deployment u Cloudflare dashboardu.
-- **Limit buildova:** free plan ima 500 buildova mjesečno (~16 dnevno). Svaki Save u CMS-u je jedan commit i jedan build, pa grupiši izmjene (npr. više cijena odjednom).
+- **Limit buildova:** Svaki Save u CMS-u je jedan commit i jedan build, pa grupiši izmjene (npr. više cijena odjednom). Mjesečni limit buildova provjeriti u Cloudflare dokumentaciji za Workers Builds.
 - Za veće izmjene koristiti granu + preview URL (Cloudflare pravi preview deploy za grane i pull requestove), pa merge.
 
 ## 9. Dizajn
@@ -293,7 +295,7 @@ Generiše N lažnih restorana (u `src/content/restaurants/_fake-*`, u `.gitignor
 
 ### Faza 0: Setup
 - `npm create astro@latest` (TypeScript strict, empty), dodati `@astrojs/preact`, `@astrojs/sitemap`, `sharp`, `qrcode`, fontsource pakete.
-- `site.ts` (jezici, page size, `SITE_URL` iz env-a, fallback na `pages.dev` URL), `tokens.css`, `base.css`, BaseLayout, 404.
+- `site.ts` (jezici, page size, `SITE_URL` iz env-a, fallback na `workers.dev` URL), `tokens.css`, `base.css`, BaseLayout, 404.
 - `.gitignore` (`qr/`, `_fake-*`), ESLint/Prettier opcionalno, GitHub repo.
 - **Gotovo kada:** `npm run dev` i `npm run build` prolaze, prazna početna se prikazuje.
 
@@ -334,15 +336,24 @@ Generiše N lažnih restorana (u `src/content/restaurants/_fake-*`, u `.gitignor
 - Ako ciljevi nisu ispunjeni, primijeniti opcije iz 6.2.
 - **Gotovo kada:** Lighthouse mobile ≥ 95 (Performance, A11y, SEO) na imeniku i meniju sa 100 restorana; zabilježeni brojevi u `docs/performance.md`.
 
-### Faza 8: Deploy (GitHub + Cloudflare Pages)
-- Push na GitHub. U Cloudflare dashboardu: **Workers & Pages → Create application → Pages → Import an existing Git repository**, izabrati repo.
-- Postavke builda: production branch `main`, build command `npm run validate && npm run build`, build output directory `dist`.
-- Environment varijable: `SITE_URL` (privremeno `https://<ime-projekta>.pages.dev`) i, ako build javi grešku o verziji Node-a, `NODE_VERSION=22` (Astro traži ≥ 22.12.0; dodati i `engines` u `package.json` i `.nvmrc`).
-- Preview deployi za grane i pull requestove, produkcija iz `main`.
-- **Gotovo kada:** sajt live na `pages.dev`, push u `main` automatski objavljuje, nevalidan JSON blokira deploy, broj fajlova u `dist/` je zabilježen.
+### Faza 8: Deploy (GitHub + Cloudflare Workers)
+- Projekat je već povezan s GitHub repoom u Cloudflare dashboardu (Workers & Pages).
+- U korijen repoa dodati `wrangler.jsonc`:
+  ```jsonc
+  {
+    "name": "bhmeni",
+    "compatibility_date": "2026-10-11",
+    "assets": { "directory": "./dist", "not_found_handling": "404-page" }
+  }
+  ```
+  (`name` mora odgovarati imenu Workera u Cloudflareu. Nema `main` polja i nema `@astrojs/cloudflare` adaptera.)
+- U Cloudflare Settings → Build: build command `npm run validate && npm run build` (do Faze 5 samo `npm run build`), deploy command `npx wrangler@latest deploy`.
+- Env varijable: `SITE_URL` (privremeno `https://bhmeni.<subdomena>.workers.dev`) i, ako build javi grešku o verziji Node-a, `NODE_VERSION=22` (Astro traži ≥ 22.12.0; dodati i `engines` u `package.json` i `.nvmrc`).
+- Preview okruženja za grane i pull requestove (Worker Previews).
+- **Gotovo kada:** sajt live na `workers.dev` adresi, push u `main` automatski objavljuje, nevalidan JSON blokira deploy, broj fajlova u `dist/` je zabilježen (limit 20.000).
 
 ### Faza 9: Domena i završna obrada
-- Kupiti domenu, dodati je u Cloudflare Pages projektu (Custom domains), postaviti `SITE_URL`, rebuild, **tek tada generisati i štampati QR kodove**. Staviti redirect sa `pages.dev` adrese na domenu.
+- Kupiti domenu, dodati je u Cloudflare Worker projektu (Settings → Domains & Routes), postaviti `SITE_URL`, rebuild, **tek tada generisati i štampati QR kodove**. Staviti redirect sa `workers.dev` adrese na domenu.
 - Opcionalno: tamni režim, jednostavna analitika (Cloudflare Web Analytics ili Plausible), A6 table-tent za štampu, `404` i `o-nama`/kontakt stranica.
 
 ## 11. Rizici i napomene
@@ -351,8 +362,8 @@ Generiše N lažnih restorana (u `src/content/restaurants/_fake-*`, u `.gitignor
 |---|---|
 | Sporiji build zbog slika | Mjeriti u Fazi 7; kompresija prije commita; alternative u 6.2 |
 | Limit od 20.000 fajlova (Cloudflare free) | Manje varijanti slika, brojati fajlove u Fazi 7; plaćeni plan ima viši limit |
-| Limit od 500 buildova mjesečno | Grupisati izmjene u CMS-u; plaćeni plan ima 5.000 |
-| Cloudflare mijenja preporuku Pages → Workers | Provjeriti pri Fazi 8; statički `dist/` radi na oba |
+| Limit buildova mjesečno (nepotvrđen za Workers Builds) | Grupisati izmjene u CMS-u; provjeriti limit u dokumentaciji |
+| Cloudflare mijenja proizvode (Pages → Workers) | Koristimo Workers static assets; statički `dist/` se lako prebacuje |
 | Odštampani QR s pogrešnim URL-om | Štampati tek na konačnoj domeni; slug se ne mijenja |
 | Alergeni/cijene netačni | Odgovornost je na onome ko održava podatke. Dogovoriti s vlasnicima pisane izmjene |
 | Prijevodi UI-a loši | Mašinski prijevod kao nacrt, pregled izvornog govornika (naročito `ar`, `tr`, `de`) |

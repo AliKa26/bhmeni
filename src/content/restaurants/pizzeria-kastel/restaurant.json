@@ -1,0 +1,45 @@
+{
+  "name": "Pizzeria Kastel",
+  "active": true,
+  "listed": true,
+  "featured": false,
+  "city": "banja-luka",
+  "categories": ["pizzeria", "italijanska"],
+  "description": {
+    "bs": "Pica iz peći na drva, svježa pasta i tiramisu, otvoreno do kasno.",
+    "en": "Wood-fired pizza, fresh pasta and tiramisu, open late."
+  },
+  "logo": "./images/logo.png",
+  "cover": "./images/cover.jpg",
+  "address": "Kralja Petra I Karađorđevića 50, 78000 Banja Luka",
+  "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=44.7722,17.1910",
+  "coordinates": { "lat": 44.7722, "lng": 17.191 },
+  "phone": "+387 51 000 003",
+  "email": "kastel@example.ba",
+  "website": "",
+  "socials": {
+    "instagram": "https://www.instagram.com/example",
+    "facebook": "",
+    "tiktok": "https://www.tiktok.com/@example",
+    "tripadvisor": ""
+  },
+  "workingHours": [
+    { "days": "Pon–Čet", "hours": "11:00–23:00" },
+    { "days": "Pet, Sub", "hours": "11:00–01:00" },
+    { "days": "Ned", "hours": "13:00–23:00" }
+  ],
+  "languages": ["bs", "en"],
+  "defaultLanguage": "bs",
+  "currency": "KM",
+  "priceLevel": 2,
+  "theme": {
+    "preset": "night",
+    "colors": {},
+    "fonts": { "heading": "fraunces", "body": "inter" },
+    "layout": "photo-grid",
+    "radius": "md",
+    "header": "logo"
+  },
+  "showPoweredBy": false,
+  "updatedAt": "2026-10-11"
+}

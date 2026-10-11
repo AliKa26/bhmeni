@@ -1,0 +1,16 @@
+[
+  { "id": "gluten", "icon": "🌾", "name": { "bs": "Gluten", "en": "Gluten", "de": "Gluten", "tr": "Gluten", "ar": "الغلوتين", "it": "Glutine" } },
+  { "id": "crustaceans", "icon": "🦐", "name": { "bs": "Rakovi", "en": "Crustaceans", "de": "Krebstiere", "tr": "Kabuklular", "ar": "القشريات", "it": "Crostacei" } },
+  { "id": "eggs", "icon": "🥚", "name": { "bs": "Jaja", "en": "Eggs", "de": "Eier", "tr": "Yumurta", "ar": "البيض", "it": "Uova" } },
+  { "id": "fish", "icon": "🐟", "name": { "bs": "Riba", "en": "Fish", "de": "Fisch", "tr": "Balık", "ar": "السمك", "it": "Pesce" } },
+  { "id": "peanuts", "icon": "🥜", "name": { "bs": "Kikiriki", "en": "Peanuts", "de": "Erdnüsse", "tr": "Yer fıstığı", "ar": "الفول السوداني", "it": "Arachidi" } },
+  { "id": "soybeans", "icon": "🫘", "name": { "bs": "Soja", "en": "Soybeans", "de": "Soja", "tr": "Soya", "ar": "الصويا", "it": "Soia" } },
+  { "id": "milk", "icon": "🥛", "name": { "bs": "Mlijeko", "en": "Milk", "de": "Milch", "tr": "Süt", "ar": "الحليب", "it": "Latte" } },
+  { "id": "nuts", "icon": "🌰", "name": { "bs": "Orašasti plodovi", "en": "Tree nuts", "de": "Schalenfrüchte", "tr": "Sert kabuklu yemişler", "ar": "المكسرات", "it": "Frutta a guscio" } },
+  { "id": "celery", "icon": "🥬", "name": { "bs": "Celer", "en": "Celery", "de": "Sellerie", "tr": "Kereviz", "ar": "الكرفس", "it": "Sedano" } },
+  { "id": "mustard", "icon": "🟡", "name": { "bs": "Senf", "en": "Mustard", "de": "Senf", "tr": "Hardal", "ar": "الخردل", "it": "Senape" } },
+  { "id": "sesame", "icon": "⚪", "name": { "bs": "Susam", "en": "Sesame", "de": "Sesam", "tr": "Susam", "ar": "السمسم", "it": "Sesamo" } },
+  { "id": "sulphites", "icon": "🍷", "name": { "bs": "Sulfiti", "en": "Sulphites", "de": "Sulfite", "tr": "Sülfitler", "ar": "الكبريتيت", "it": "Solfiti" } },
+  { "id": "lupin", "icon": "🌼", "name": { "bs": "Lupina", "en": "Lupin", "de": "Lupinen", "tr": "Acı bakla", "ar": "الترمس", "it": "Lupini" } },
+  { "id": "molluscs", "icon": "🦪", "name": { "bs": "Mekušci", "en": "Molluscs", "de": "Weichtiere", "tr": "Yumuşakçalar", "ar": "الرخويات", "it": "Molluschi" } }
+]

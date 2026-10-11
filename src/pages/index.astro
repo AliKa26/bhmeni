@@ -1,16 +1,45 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE_NAME, SITE_TAGLINE } from '../config/site';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title={SITE_NAME} description={SITE_TAGLINE}>
+  <main id="main" class="home container">
+    <p class="wordmark" aria-label={SITE_NAME}>BH<span>Meni</span></p>
+    <h1>{SITE_TAGLINE}</h1>
+    <p class="lead">Imenik restorana i digitalni meniji uskoro su ovdje.</p>
+  </main>
+</BaseLayout>
+
+<style>
+  .home {
+    display: grid;
+    align-content: center;
+    gap: var(--space-4);
+    min-block-size: 100dvh;
+    padding-block: var(--space-7);
+  }
+
+  .wordmark {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .wordmark span {
+    color: var(--color-primary);
+  }
+
+  h1 {
+    font-size: var(--text-4xl);
+    max-inline-size: 14ch;
+    letter-spacing: -0.03em;
+  }
+
+  .lead {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    max-inline-size: 40ch;
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+/**
+ * Osnovni HTML skelet za sve stranice: meta tagovi, fontovi, globalni stilovi.
+ * DirectoryLayout i MenuLayout (kasnije faze) se grade na ovome.
+ */
+import '../styles/tokens.css';
+import '../styles/base.css';
+
+import { DEFAULT_LANG, LANGUAGES, SITE_NAME, type Lang } from '../config/site';
+import { BRAND_FONTS, type FontId } from '../config/themes';
+import { fontFaceCss, fontPreloadUrl } from '../lib/fonts';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: Lang;
+  /** Fontovi koje stranica koristi; prvi se preloada. */
+  fonts?: readonly FontId[];
+  /** Inline CSS varijable na <body> (tema restorana). */
+  bodyStyle?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  lang = DEFAULT_LANG,
+  fonts = [BRAND_FONTS.heading, BRAND_FONTS.body],
+  bodyStyle,
+  noindex = false,
+} = Astro.props;
+
+const { dir } = LANGUAGES[lang];
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle = title === SITE_NAME ? title : `${title} · ${SITE_NAME}`;
+const [preloadFont] = fonts;
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{fullTitle}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    {preloadFont && <link rel="preload" href={fontPreloadUrl(preloadFont)} as="font" type="font/woff2" crossorigin />}
+    <style is:inline set:html={fontFaceCss(fonts)} />
+    <slot name="head" />
+  </head>
+  <body style={bodyStyle}>
+    <a class="skip-link" href="#main">Preskoči na sadržaj</a>
+    <slot />
+  </body>
+</html>

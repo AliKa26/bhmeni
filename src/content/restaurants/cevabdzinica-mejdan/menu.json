@@ -1,0 +1,268 @@
+{
+  "categories": [
+    {
+      "id": "cevapi-i-rostilj",
+      "name": { "bs": "Ćevapi i roštilj", "en": "Ćevapi & grill", "de": "Ćevapi & Grill", "tr": "Ćevapi ve ızgara", "ar": "تشيفابي ومشويات" },
+      "items": [
+        {
+          "id": "cevapi",
+          "name": { "bs": "Ćevapi", "en": "Ćevapi", "de": "Ćevapi", "tr": "Ćevapi", "ar": "تشيفابي" },
+          "description": {
+            "bs": "Ćevapi od junećeg mesa s ugljena, u toplom somunu sa sitno sjeckanim lukom.",
+            "en": "Charcoal-grilled beef ćevapi in warm somun bread with finely chopped onion.",
+            "de": "Rindfleisch-Ćevapi vom Holzkohlegrill im warmen Somun mit fein gehackten Zwiebeln.",
+            "tr": "Sıcak somun ekmeğinde, ince doğranmış soğanla kömürde dana ćevapi.",
+            "ar": "تشيفابي من لحم البقر مشوية على الفحم في خبز صامون دافئ مع بصل مفروم."
+          },
+          "image": "./images/cevapi.jpg",
+          "variants": [
+            { "label": { "bs": "5 komada", "en": "5 pieces", "de": "5 Stück", "tr": "5 adet", "ar": "5 قطع" }, "price": 6 },
+            { "label": { "bs": "10 komada", "en": "10 pieces", "de": "10 Stück", "tr": "10 adet", "ar": "10 قطع" }, "price": 10 },
+            { "label": { "bs": "15 komada", "en": "15 pieces", "de": "15 Stück", "tr": "15 adet", "ar": "15 قطعة" }, "price": 14 }
+          ],
+          "tags": ["halal"],
+          "allergens": ["gluten"],
+          "badge": "popular"
+        },
+        {
+          "id": "cevapi-sa-kajmakom",
+          "name": { "bs": "Ćevapi sa kajmakom", "en": "Ćevapi with kajmak", "de": "Ćevapi mit Kajmak", "tr": "Kaymaklı ćevapi" },
+          "description": {
+            "bs": "Deset ćevapa u somunu prelivenih domaćim kajmakom.",
+            "en": "Ten ćevapi in somun bread topped with homemade kajmak cream.",
+            "de": "Zehn Ćevapi im Somun mit hausgemachtem Kajmak.",
+            "tr": "Ev yapımı kaymakla somun içinde on ćevapi."
+          },
+          "price": 12,
+          "tags": ["halal"],
+          "allergens": ["gluten", "milk"]
+        },
+        {
+          "id": "pljeskavica",
+          "name": { "bs": "Pljeskavica", "en": "Pljeskavica", "de": "Pljeskavica", "tr": "Pljeskavica", "ar": "بليسكافيتسا" },
+          "description": {
+            "bs": "Velika pljeskavica od mljevene junetine u somunu, s lukom i kajmakom po želji.",
+            "en": "A large minced beef patty in somun bread, with onion and optional kajmak.",
+            "de": "Großes Hacksteak vom Rind im Somun, mit Zwiebeln und Kajmak nach Wunsch.",
+            "ar": "قرص كبير من لحم البقر المفروم في خبز صامون مع البصل والقيمق حسب الرغبة."
+          },
+          "image": "./images/pljeskavica.jpg",
+          "price": 10,
+          "tags": ["halal"],
+          "allergens": ["gluten"]
+        },
+        {
+          "id": "punjena-pljeskavica",
+          "name": { "bs": "Punjena pljeskavica", "en": "Stuffed pljeskavica", "de": "Gefüllte Pljeskavica" },
+          "description": {
+            "bs": "Pljeskavica punjena kajmakom i mladim sirom, pečena polako na ugljenu.",
+            "en": "Pljeskavica stuffed with kajmak and young cheese, slowly grilled over charcoal.",
+            "de": "Pljeskavica gefüllt mit Kajmak und jungem Käse, langsam über Holzkohle gegrillt."
+          },
+          "price": 12.5,
+          "tags": ["halal"],
+          "allergens": ["gluten", "milk"],
+          "badge": "chef"
+        },
+        {
+          "id": "sudzukice",
+          "name": { "bs": "Sudžukice", "en": "Sudžukice sausages", "de": "Sudžukice-Würstchen" },
+          "description": {
+            "bs": "Domaće goveđe kobasice s ljutom paprikom, u somunu.",
+            "en": "Homemade beef sausages with hot paprika, in somun bread.",
+            "de": "Hausgemachte Rindswürstchen mit scharfem Paprika, im Somun."
+          },
+          "price": 9,
+          "tags": ["halal", "spicy"],
+          "allergens": ["gluten", "mustard"]
+        }
+      ]
+    },
+    {
+      "id": "domaca-jela",
+      "name": { "bs": "Domaća jela", "en": "Traditional dishes", "de": "Traditionelle Gerichte", "tr": "Geleneksel yemekler", "ar": "أطباق تقليدية" },
+      "items": [
+        {
+          "id": "begova-corba",
+          "name": { "bs": "Begova čorba", "en": "Bey's soup", "de": "Begova-Suppe", "tr": "Bey çorbası", "ar": "حساء البيك" },
+          "description": {
+            "bs": "Gusta čorba od piletine i povrća s bamijom i kiselim vrhnjem.",
+            "en": "Thick chicken and vegetable soup with okra and sour cream.",
+            "de": "Dicke Hühner-Gemüse-Suppe mit Okra und Sauerrahm.",
+            "tr": "Bamya ve ekşi kremalı yoğun tavuk ve sebze çorbası."
+          },
+          "image": "./images/begova-corba.jpg",
+          "price": 5,
+          "tags": ["halal"],
+          "allergens": ["milk", "eggs", "celery"]
+        },
+        {
+          "id": "klepe",
+          "name": { "bs": "Klepe", "en": "Klepe dumplings", "de": "Klepe-Teigtaschen" },
+          "description": {
+            "bs": "Ručno pravljene tašćice punjene mesom, prelivene jogurtom s bijelim lukom.",
+            "en": "Handmade meat dumplings topped with garlic yoghurt.",
+            "de": "Handgemachte Teigtaschen mit Fleischfüllung und Knoblauchjoghurt."
+          },
+          "price": 9,
+          "tags": ["halal"],
+          "allergens": ["gluten", "milk", "eggs"]
+        },
+        {
+          "id": "sogan-dolma",
+          "name": { "bs": "Sogan-dolma", "en": "Sogan dolma (stuffed onions)", "de": "Sogan-Dolma (gefüllte Zwiebeln)" },
+          "description": {
+            "bs": "Glavice luka punjene mljevenim mesom i rižom, kuhane u umaku od paradajza.",
+            "en": "Onions stuffed with minced meat and rice, cooked in tomato sauce.",
+            "de": "Zwiebeln gefüllt mit Hackfleisch und Reis, in Tomatensauce gegart."
+          },
+          "price": 10,
+          "tags": ["halal"],
+          "allergens": ["milk"],
+          "badge": "new"
+        }
+      ]
+    },
+    {
+      "id": "prilozi-i-salate",
+      "name": { "bs": "Prilozi i salate", "en": "Sides & salads", "de": "Beilagen & Salate", "tr": "Yan ürünler ve salatalar", "ar": "مقبلات وسلطات" },
+      "items": [
+        {
+          "id": "sopska-salata",
+          "name": { "bs": "Šopska salata", "en": "Shopska salad", "de": "Schopska-Salat", "tr": "Şopska salatası", "ar": "سلطة شوبسكا" },
+          "description": {
+            "bs": "Paradajz, krastavac, paprika i luk, posuto rendanim bijelim sirom.",
+            "en": "Tomato, cucumber, pepper and onion topped with grated white cheese.",
+            "de": "Tomate, Gurke, Paprika und Zwiebel mit geriebenem Weißkäse."
+          },
+          "image": "./images/sopska.jpg",
+          "price": 5,
+          "tags": ["vegetarian", "gluten-free"],
+          "allergens": ["milk"]
+        },
+        {
+          "id": "kajmak",
+          "name": { "bs": "Kajmak", "en": "Kajmak", "de": "Kajmak" },
+          "description": {
+            "bs": "Domaći kajmak, porcija 100 g.",
+            "en": "Homemade kajmak cream, 100 g portion.",
+            "de": "Hausgemachter Kajmak, Portion 100 g."
+          },
+          "price": 3,
+          "tags": ["vegetarian", "gluten-free", "local"],
+          "allergens": ["milk"]
+        },
+        {
+          "id": "ljuta-paprika",
+          "name": { "bs": "Ljuta paprika", "en": "Hot pepper", "de": "Scharfe Paprika" },
+          "description": {
+            "bs": "Pečena ljuta paprika s bijelim lukom.",
+            "en": "Roasted hot pepper with garlic.",
+            "de": "Geröstete scharfe Paprika mit Knoblauch."
+          },
+          "price": 2,
+          "tags": ["vegan", "spicy", "gluten-free"]
+        },
+        {
+          "id": "somun",
+          "name": { "bs": "Somun", "en": "Somun bread", "de": "Somun-Brot" },
+          "description": {
+            "bs": "Dodatni somun iz krušne peći.",
+            "en": "Extra somun bread from the wood-fired oven.",
+            "de": "Zusätzliches Somun aus dem Holzofen."
+          },
+          "price": 1.5,
+          "tags": ["vegan"],
+          "allergens": ["gluten"]
+        }
+      ]
+    },
+    {
+      "id": "deserti",
+      "name": { "bs": "Deserti", "en": "Desserts", "de": "Desserts", "tr": "Tatlılar", "ar": "حلويات" },
+      "items": [
+        {
+          "id": "tufahija",
+          "name": { "bs": "Tufahija", "en": "Tufahija", "de": "Tufahija", "tr": "Tufahija", "ar": "توفاحيا" },
+          "description": {
+            "bs": "Jabuka kuhana u šećernom sirupu, punjena orasima i prelivena šlagom.",
+            "en": "Apple poached in sugar syrup, stuffed with walnuts and topped with whipped cream.",
+            "de": "In Zuckersirup pochierter Apfel mit Walnussfüllung und Sahne.",
+            "tr": "Şekerli şurupta haşlanmış, cevizle doldurulmuş ve kremalı elma."
+          },
+          "image": "./images/tufahija.jpg",
+          "price": 4,
+          "tags": ["vegetarian"],
+          "allergens": ["nuts", "milk"]
+        },
+        {
+          "id": "baklava",
+          "name": { "bs": "Baklava", "en": "Baklava", "de": "Baklava", "tr": "Baklava", "ar": "بقلاوة" },
+          "description": {
+            "bs": "Domaća baklava s orasima, dva komada.",
+            "en": "Homemade walnut baklava, two pieces.",
+            "de": "Hausgemachte Walnuss-Baklava, zwei Stück."
+          },
+          "price": 4,
+          "tags": ["vegetarian"],
+          "allergens": ["gluten", "nuts", "milk"]
+        }
+      ]
+    },
+    {
+      "id": "pica",
+      "name": { "bs": "Pića", "en": "Drinks", "de": "Getränke", "tr": "İçecekler", "ar": "مشروبات" },
+      "items": [
+        {
+          "id": "jogurt",
+          "name": { "bs": "Jogurt", "en": "Drinking yoghurt", "de": "Trinkjoghurt", "tr": "Yoğurt" },
+          "description": {
+            "bs": "Domaći tekući jogurt, 0,25 l.",
+            "en": "Local drinking yoghurt, 0.25 l.",
+            "de": "Regionaler Trinkjoghurt, 0,25 l."
+          },
+          "price": 2,
+          "tags": ["vegetarian", "gluten-free", "local"],
+          "allergens": ["milk"]
+        },
+        {
+          "id": "bosanska-kafa",
+          "name": { "bs": "Bosanska kafa", "en": "Bosnian coffee", "de": "Bosnischer Kaffee", "tr": "Boşnak kahvesi", "ar": "قهوة بوسنية" },
+          "description": {
+            "bs": "Servirana u džezvi, s rahat-lokumom.",
+            "en": "Served in a džezva pot, with Turkish delight.",
+            "de": "Serviert in der Džezva, mit Lokum."
+          },
+          "price": 2.5,
+          "tags": ["vegan"]
+        },
+        {
+          "id": "domaca-limunada",
+          "name": { "bs": "Domaća limunada", "en": "Homemade lemonade", "de": "Hausgemachte Limonade" },
+          "description": {
+            "bs": "Svježe cijeđeni limun, med i nana.",
+            "en": "Freshly squeezed lemon, honey and mint.",
+            "de": "Frisch gepresste Zitrone, Honig und Minze."
+          },
+          "variants": [
+            { "label": { "bs": "0,3 l", "en": "0.3 l", "de": "0,3 l" }, "price": 3.5 },
+            { "label": { "bs": "0,5 l", "en": "0.5 l", "de": "0,5 l" }, "price": 5 }
+          ],
+          "tags": ["vegetarian", "gluten-free"]
+        },
+        {
+          "id": "kisela-voda",
+          "name": { "bs": "Kisela voda", "en": "Sparkling water", "de": "Mineralwasser" },
+          "description": {
+            "bs": "Prirodna mineralna voda, 0,25 l.",
+            "en": "Natural mineral water, 0.25 l.",
+            "de": "Natürliches Mineralwasser, 0,25 l."
+          },
+          "price": 2.5,
+          "tags": ["vegan"],
+          "available": false
+        }
+      ]
+    }
+  ]
+}

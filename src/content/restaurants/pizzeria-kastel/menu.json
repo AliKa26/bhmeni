@@ -1,0 +1,215 @@
+{
+  "categories": [
+    {
+      "id": "pice",
+      "name": { "bs": "Pice", "en": "Pizzas" },
+      "description": {
+        "bs": "Tijesto fermentira 48 sati. Peče se u peći na drva na 450 °C.",
+        "en": "Dough fermented for 48 hours. Baked in a wood-fired oven at 450 °C."
+      },
+      "items": [
+        {
+          "id": "margherita",
+          "name": { "bs": "Margherita", "en": "Margherita" },
+          "description": {
+            "bs": "Pelat od paradajza, fior di latte, bosiljak, maslinovo ulje.",
+            "en": "Tomato sauce, fior di latte, basil, olive oil."
+          },
+          "image": "./images/margherita.jpg",
+          "variants": [
+            { "label": { "bs": "32 cm", "en": "32 cm" }, "price": 11 },
+            { "label": { "bs": "45 cm", "en": "45 cm" }, "price": 19 }
+          ],
+          "tags": ["vegetarian"],
+          "allergens": ["gluten", "milk"]
+        },
+        {
+          "id": "capricciosa",
+          "name": { "bs": "Capricciosa", "en": "Capricciosa" },
+          "description": {
+            "bs": "Paradajz, sir, šunka, šampinjoni, masline.",
+            "en": "Tomato, cheese, ham, mushrooms, olives."
+          },
+          "image": "./images/capricciosa.jpg",
+          "variants": [
+            { "label": { "bs": "32 cm", "en": "32 cm" }, "price": 13 },
+            { "label": { "bs": "45 cm", "en": "45 cm" }, "price": 22 }
+          ],
+          "allergens": ["gluten", "milk"],
+          "badge": "popular"
+        },
+        {
+          "id": "diavola",
+          "name": { "bs": "Diavola", "en": "Diavola" },
+          "description": {
+            "bs": "Paradajz, sir, ljuta kobasica, čili ulje.",
+            "en": "Tomato, cheese, spicy salami, chilli oil."
+          },
+          "image": "./images/diavola.jpg",
+          "variants": [
+            { "label": { "bs": "32 cm", "en": "32 cm" }, "price": 13 },
+            { "label": { "bs": "45 cm", "en": "45 cm" }, "price": 22 }
+          ],
+          "tags": ["spicy"],
+          "allergens": ["gluten", "milk"]
+        },
+        {
+          "id": "vegetariana",
+          "name": { "bs": "Vegetariana", "en": "Vegetariana" },
+          "description": {
+            "bs": "Paradajz, sir, grilovane tikvice, paprika, patlidžan.",
+            "en": "Tomato, cheese, grilled zucchini, peppers, aubergine."
+          },
+          "image": "./images/vegetariana.jpg",
+          "variants": [
+            { "label": { "bs": "32 cm", "en": "32 cm" }, "price": 12 },
+            { "label": { "bs": "45 cm", "en": "45 cm" }, "price": 20 }
+          ],
+          "tags": ["vegetarian"],
+          "allergens": ["gluten", "milk"]
+        },
+        {
+          "id": "kastel-specijal",
+          "name": { "bs": "Kastel specijal", "en": "Kastel special" },
+          "description": {
+            "bs": "Bijela pica s kajmakom, pršutom, rukolom i parmezanom.",
+            "en": "White pizza with kajmak, prosciutto, rocket and parmesan."
+          },
+          "variants": [
+            { "label": { "bs": "32 cm", "en": "32 cm" }, "price": 15 },
+            { "label": { "bs": "45 cm", "en": "45 cm" }, "price": 25 }
+          ],
+          "allergens": ["gluten", "milk"],
+          "badge": "chef"
+        }
+      ]
+    },
+    {
+      "id": "paste",
+      "name": { "bs": "Paste", "en": "Pasta" },
+      "items": [
+        {
+          "id": "carbonara",
+          "name": { "bs": "Spaghetti carbonara", "en": "Spaghetti carbonara" },
+          "description": {
+            "bs": "Guanciale, žumanjak, pecorino i crni biber.",
+            "en": "Guanciale, egg yolk, pecorino and black pepper."
+          },
+          "image": "./images/carbonara.jpg",
+          "price": 14,
+          "allergens": ["gluten", "eggs", "milk"]
+        },
+        {
+          "id": "arrabbiata",
+          "name": { "bs": "Penne all'arrabbiata", "en": "Penne all'arrabbiata" },
+          "description": {
+            "bs": "Ljuti umak od paradajza s bijelim lukom i peršunom.",
+            "en": "Spicy tomato sauce with garlic and parsley."
+          },
+          "price": 11,
+          "tags": ["vegan", "spicy"],
+          "allergens": ["gluten"]
+        },
+        {
+          "id": "tagliatelle-tartufi",
+          "name": { "bs": "Tagliatelle s tartufima", "en": "Truffle tagliatelle" },
+          "description": {
+            "bs": "Svježa jajčana tjestenina, krem od tartufa, parmezan.",
+            "en": "Fresh egg pasta, truffle cream, parmesan."
+          },
+          "price": 19,
+          "allergens": ["gluten", "eggs", "milk"],
+          "badge": "new"
+        }
+      ]
+    },
+    {
+      "id": "salate",
+      "name": { "bs": "Salate", "en": "Salads" },
+      "items": [
+        {
+          "id": "cezar",
+          "name": { "bs": "Cezar salata", "en": "Caesar salad" },
+          "description": {
+            "bs": "Zelena salata, piletina sa žara, krutoni, parmezan, cezar preliv.",
+            "en": "Lettuce, grilled chicken, croutons, parmesan, Caesar dressing."
+          },
+          "price": 12,
+          "allergens": ["gluten", "eggs", "milk", "fish", "mustard"]
+        },
+        {
+          "id": "caprese",
+          "name": { "bs": "Caprese", "en": "Caprese" },
+          "description": {
+            "bs": "Paradajz, mozzarella, bosiljak, balzamiko.",
+            "en": "Tomato, mozzarella, basil, balsamic."
+          },
+          "price": 10,
+          "tags": ["vegetarian", "gluten-free"],
+          "allergens": ["milk", "sulphites"]
+        }
+      ]
+    },
+    {
+      "id": "deserti",
+      "name": { "bs": "Deserti", "en": "Desserts" },
+      "items": [
+        {
+          "id": "tiramisu",
+          "name": { "bs": "Tiramisu", "en": "Tiramisu" },
+          "description": {
+            "bs": "Klasični tiramisu s mascarponeom i espressom.",
+            "en": "Classic tiramisu with mascarpone and espresso."
+          },
+          "image": "./images/tiramisu.jpg",
+          "price": 7,
+          "tags": ["vegetarian"],
+          "allergens": ["gluten", "eggs", "milk"],
+          "badge": "popular"
+        },
+        {
+          "id": "panna-cotta",
+          "name": { "bs": "Panna cotta", "en": "Panna cotta" },
+          "description": {
+            "bs": "S prelivom od šumskog voća.",
+            "en": "With forest berry coulis."
+          },
+          "price": 6,
+          "tags": ["vegetarian", "gluten-free"],
+          "allergens": ["milk"],
+          "badge": "sale"
+        }
+      ]
+    },
+    {
+      "id": "pica",
+      "name": { "bs": "Pića", "en": "Drinks" },
+      "items": [
+        {
+          "id": "domace-pivo",
+          "name": { "bs": "Domaće točeno pivo", "en": "Local draught beer" },
+          "description": {
+            "bs": "Svijetli lager lokalne pivovare.",
+            "en": "Pale lager from a local brewery."
+          },
+          "variants": [
+            { "label": { "bs": "0,3 l", "en": "0.3 l" }, "price": 3.5 },
+            { "label": { "bs": "0,5 l", "en": "0.5 l" }, "price": 4.5 }
+          ],
+          "tags": ["local"],
+          "allergens": ["gluten"]
+        },
+        {
+          "id": "sok-od-zove",
+          "name": { "bs": "Sok od zove", "en": "Elderflower cordial" },
+          "description": {
+            "bs": "Domaći sok od cvijeta zove s limunom.",
+            "en": "Homemade elderflower cordial with lemon."
+          },
+          "price": 4,
+          "tags": ["vegan", "gluten-free", "local"]
+        }
+      ]
+    }
+  ]
+}

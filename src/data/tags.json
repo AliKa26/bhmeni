@@ -1,0 +1,9 @@
+[
+  { "id": "vegetarian", "icon": "🥕", "name": { "bs": "Vegetarijansko", "en": "Vegetarian", "de": "Vegetarisch", "tr": "Vejetaryen", "ar": "نباتي", "it": "Vegetariano" } },
+  { "id": "vegan", "icon": "🌱", "name": { "bs": "Vegansko", "en": "Vegan", "de": "Vegan", "tr": "Vegan", "ar": "نباتي صرف", "it": "Vegano" } },
+  { "id": "halal", "icon": "☪️", "name": { "bs": "Halal", "en": "Halal", "de": "Halal", "tr": "Helal", "ar": "حلال", "it": "Halal" } },
+  { "id": "spicy", "icon": "🌶️", "name": { "bs": "Ljuto", "en": "Spicy", "de": "Scharf", "tr": "Acı", "ar": "حار", "it": "Piccante" } },
+  { "id": "gluten-free", "icon": "🌾", "name": { "bs": "Bez glutena", "en": "Gluten-free", "de": "Glutenfrei", "tr": "Glutensiz", "ar": "خالٍ من الغلوتين", "it": "Senza glutine" } },
+  { "id": "lactose-free", "icon": "🥛", "name": { "bs": "Bez laktoze", "en": "Lactose-free", "de": "Laktosefrei", "tr": "Laktozsuz", "ar": "خالٍ من اللاكتوز", "it": "Senza lattosio" } },
+  { "id": "local", "icon": "📍", "name": { "bs": "Domaće namirnice", "en": "Local produce", "de": "Regionale Zutaten", "tr": "Yerel ürünler", "ar": "مكونات محلية", "it": "Prodotti locali" } }
+]

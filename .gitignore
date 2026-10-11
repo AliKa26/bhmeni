@@ -22,3 +22,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# generisani QR kodovi
+qr/
+
+# lažni restorani za test performansi (npm run seed:fake)
+src/content/restaurants/_fake-*/

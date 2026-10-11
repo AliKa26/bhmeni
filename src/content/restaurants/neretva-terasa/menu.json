@@ -1,0 +1,190 @@
+{
+  "categories": [
+    {
+      "id": "predjela",
+      "name": { "bs": "Predjela", "en": "Starters", "de": "Vorspeisen", "it": "Antipasti" },
+      "items": [
+        {
+          "id": "hercegovacki-plata",
+          "name": { "bs": "Hercegovačka plata", "en": "Herzegovinian platter", "de": "Herzegowinische Platte", "it": "Tagliere dell'Erzegovina" },
+          "description": {
+            "bs": "Pršut, sir iz mijeha, masline i domaći kruh.",
+            "en": "Cured ham, sheep's cheese aged in skin, olives and homemade bread.",
+            "de": "Rohschinken, im Schlauch gereifter Schafskäse, Oliven und hausgemachtes Brot.",
+            "it": "Prosciutto crudo, formaggio stagionato nella pelle, olive e pane fatto in casa."
+          },
+          "image": "./images/prsut.jpg",
+          "variants": [
+            { "label": { "bs": "Za jednu osobu", "en": "For one", "de": "Für eine Person", "it": "Per una persona" }, "price": 18 },
+            { "label": { "bs": "Za dvije osobe", "en": "For two", "de": "Für zwei Personen", "it": "Per due persone" }, "price": 32 }
+          ],
+          "tags": ["local"],
+          "allergens": ["gluten", "milk"]
+        },
+        {
+          "id": "riblja-corba",
+          "name": { "bs": "Riblja čorba", "en": "Fish soup", "de": "Fischsuppe", "it": "Zuppa di pesce" },
+          "description": {
+            "bs": "Bistra čorba od riječne ribe s povrćem i peršunom.",
+            "en": "Clear river fish soup with vegetables and parsley.",
+            "de": "Klare Flussfischsuppe mit Gemüse und Petersilie.",
+            "it": "Brodo limpido di pesce di fiume con verdure e prezzemolo."
+          },
+          "price": 8,
+          "tags": ["gluten-free", "lactose-free"],
+          "allergens": ["fish", "celery"]
+        },
+        {
+          "id": "bruskete-sa-paradajzom",
+          "name": { "bs": "Bruskete s paradajzom", "en": "Tomato bruschetta", "de": "Bruschetta mit Tomaten", "it": "Bruschetta al pomodoro" },
+          "description": {
+            "bs": "Prepečeni kruh, hercegovački paradajz, bosiljak i maslinovo ulje.",
+            "en": "Toasted bread, Herzegovinian tomatoes, basil and olive oil.",
+            "it": "Pane tostato, pomodori dell'Erzegovina, basilico e olio d'oliva."
+          },
+          "price": 7,
+          "tags": ["vegan"],
+          "allergens": ["gluten"]
+        }
+      ]
+    },
+    {
+      "id": "glavna-jela",
+      "name": { "bs": "Glavna jela", "en": "Main courses", "de": "Hauptgerichte", "it": "Secondi" },
+      "items": [
+        {
+          "id": "pastrmka-na-zaru",
+          "name": { "bs": "Pastrmka na žaru", "en": "Grilled trout", "de": "Gegrillte Forelle", "it": "Trota alla griglia" },
+          "description": {
+            "bs": "Cijela neretvanska pastrmka s blitvom i krompirom.",
+            "en": "Whole Neretva trout with Swiss chard and potatoes.",
+            "de": "Ganze Neretva-Forelle mit Mangold und Kartoffeln.",
+            "it": "Trota intera della Neretva con bietola e patate."
+          },
+          "image": "./images/pastrmka.jpg",
+          "price": 22,
+          "tags": ["gluten-free", "lactose-free", "local"],
+          "allergens": ["fish"],
+          "badge": "popular"
+        },
+        {
+          "id": "mostarski-japrak",
+          "name": { "bs": "Mostarski japrak", "en": "Mostar japrak", "de": "Mostarer Japrak", "it": "Japrak di Mostar" },
+          "description": {
+            "bs": "Listovi blitve punjeni mesom i rižom, s kiselim mlijekom.",
+            "en": "Chard leaves stuffed with meat and rice, served with sour milk.",
+            "de": "Mangoldblätter gefüllt mit Fleisch und Reis, mit Sauermilch.",
+            "it": "Foglie di bietola ripiene di carne e riso, con latte acido."
+          },
+          "image": "./images/japrak.jpg",
+          "price": 16,
+          "allergens": ["milk"],
+          "badge": "chef"
+        },
+        {
+          "id": "teletina-ispod-saca",
+          "name": { "bs": "Teletina ispod sača", "en": "Veal under the bell", "de": "Kalbfleisch unter der Glocke", "it": "Vitello sotto la campana" },
+          "description": {
+            "bs": "Teletina i krompir pečeni ispod sača. Narudžba dan ranije.",
+            "en": "Veal and potatoes slow-baked under an iron bell. Order one day ahead.",
+            "de": "Kalbfleisch und Kartoffeln unter der Eisenglocke gegart. Bitte einen Tag vorher bestellen.",
+            "it": "Vitello e patate cotti sotto la campana di ferro. Ordinare un giorno prima."
+          },
+          "variants": [
+            { "label": { "bs": "Porcija", "en": "Portion", "de": "Portion", "it": "Porzione" }, "price": 28 },
+            { "label": { "bs": "1 kg (za 3–4 osobe)", "en": "1 kg (serves 3–4)", "de": "1 kg (für 3–4 Personen)", "it": "1 kg (per 3–4 persone)" }, "price": 75 }
+          ],
+          "tags": ["gluten-free", "local"]
+        },
+        {
+          "id": "rizoto-plodovi-mora",
+          "name": { "bs": "Rižoto s plodovima mora", "en": "Seafood risotto", "de": "Meeresfrüchte-Risotto", "it": "Risotto ai frutti di mare" },
+          "description": {
+            "bs": "Kremasti rižoto s kozicama, dagnjama i lignjama.",
+            "en": "Creamy risotto with prawns, mussels and squid.",
+            "de": "Cremiges Risotto mit Garnelen, Miesmuscheln und Tintenfisch.",
+            "it": "Risotto cremoso con gamberi, cozze e calamari."
+          },
+          "image": "./images/rizoto.jpg",
+          "price": 24,
+          "allergens": ["crustaceans", "molluscs", "milk", "sulphites"]
+        }
+      ]
+    },
+    {
+      "id": "deserti",
+      "name": { "bs": "Deserti", "en": "Desserts", "de": "Desserts", "it": "Dolci" },
+      "items": [
+        {
+          "id": "smokve-sa-sirom",
+          "name": { "bs": "Smokve sa sirom", "en": "Figs with cheese", "de": "Feigen mit Käse", "it": "Fichi con formaggio" },
+          "description": {
+            "bs": "Sušene hercegovačke smokve, mladi sir i med.",
+            "en": "Dried Herzegovinian figs, fresh cheese and honey.",
+            "de": "Getrocknete herzegowinische Feigen, Frischkäse und Honig.",
+            "it": "Fichi secchi dell'Erzegovina, formaggio fresco e miele."
+          },
+          "price": 7,
+          "tags": ["vegetarian", "gluten-free", "local"],
+          "allergens": ["milk"],
+          "badge": "new"
+        },
+        {
+          "id": "hurmasice",
+          "name": { "bs": "Hurmašice", "en": "Hurmašice syrup cakes", "de": "Hurmašice-Sirupküchlein" },
+          "description": {
+            "bs": "Kolačići natopljeni sirupom od limuna.",
+            "en": "Small cakes soaked in lemon syrup.",
+            "de": "Kleine Küchlein in Zitronensirup getränkt."
+          },
+          "price": 5,
+          "tags": ["vegetarian"],
+          "allergens": ["gluten", "eggs", "milk"]
+        }
+      ]
+    },
+    {
+      "id": "vina",
+      "name": { "bs": "Hercegovačka vina", "en": "Herzegovinian wines", "de": "Herzegowinische Weine", "it": "Vini dell'Erzegovina" },
+      "description": {
+        "bs": "Vina lokalnih vinarija iz okoline Mostara i Čapljine.",
+        "en": "Wines from local wineries around Mostar and Čapljina.",
+        "it": "Vini delle cantine locali intorno a Mostar e Čapljina."
+      },
+      "items": [
+        {
+          "id": "zilavka",
+          "name": { "bs": "Žilavka", "en": "Žilavka (white)", "de": "Žilavka (weiß)", "it": "Žilavka (bianco)" },
+          "description": {
+            "bs": "Autohtono bijelo vino, suho, s notama badema.",
+            "en": "Indigenous dry white wine with notes of almond.",
+            "de": "Autochthoner trockener Weißwein mit Mandelnoten.",
+            "it": "Vino bianco secco autoctono con note di mandorla."
+          },
+          "variants": [
+            { "label": { "bs": "Čaša 0,15 l", "en": "Glass 0.15 l", "de": "Glas 0,15 l", "it": "Calice 0,15 l" }, "price": 6 },
+            { "label": { "bs": "Boca 0,75 l", "en": "Bottle 0.75 l", "de": "Flasche 0,75 l", "it": "Bottiglia 0,75 l" }, "price": 35 }
+          ],
+          "tags": ["vegan", "local"],
+          "allergens": ["sulphites"]
+        },
+        {
+          "id": "blatina",
+          "name": { "bs": "Blatina", "en": "Blatina (red)", "de": "Blatina (rot)", "it": "Blatina (rosso)" },
+          "description": {
+            "bs": "Autohtono crveno vino, voćno i mekano.",
+            "en": "Indigenous red wine, fruity and soft.",
+            "de": "Autochthoner Rotwein, fruchtig und weich.",
+            "it": "Vino rosso autoctono, fruttato e morbido."
+          },
+          "variants": [
+            { "label": { "bs": "Čaša 0,15 l", "en": "Glass 0.15 l", "de": "Glas 0,15 l", "it": "Calice 0,15 l" }, "price": 6 },
+            { "label": { "bs": "Boca 0,75 l", "en": "Bottle 0.75 l", "de": "Flasche 0,75 l", "it": "Bottiglia 0,75 l" }, "price": 38 }
+          ],
+          "tags": ["vegan", "local"],
+          "allergens": ["sulphites"]
+        }
+      ]
+    }
+  ]
+}
