@@ -58,14 +58,16 @@ const { label, categories } = Astro.props;
     // Aktivna je posljednja sekcija čiji je vrh prešao donju ivicu sticky trake.
     const update = () => {
       if (performance.now() < lockedUntil) return;
+      // Kategorije koje su filteri sakrili ne učestvuju.
+      const visible = sections.filter((section) => !section.hidden);
       const offset = nav.getBoundingClientRect().bottom + 24;
-      let active = sections[0]?.id ?? '';
-      for (const section of sections) {
+      let active = visible[0]?.id ?? '';
+      for (const section of visible) {
         if (section.getBoundingClientRect().top <= offset) active = section.id;
       }
       // Na dnu stranice aktiviraj zadnju kategoriju (kratke zadnje sekcije nikad ne dođu do vrha).
       if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
-        active = sections.at(-1)?.id ?? active;
+        active = visible.at(-1)?.id ?? active;
       }
       setActive(active);
     };
@@ -97,6 +99,12 @@ const { label, categories } = Astro.props;
         window.addEventListener('scrollend', unlock, { once: true });
       });
     }
+
+    // Filteri u meniju mijenjaju skup vidljivih kategorija.
+    window.addEventListener('menu:filtered', () => {
+      current = '';
+      update();
+    });
 
     update();
   }

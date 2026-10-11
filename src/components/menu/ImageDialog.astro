@@ -1,0 +1,134 @@
+---
+/**
+ * Jedan <dialog> za uvećanu sliku jela. Linkovi [data-zoom] u MenuItem vode na veću verziju slike;
+ * skripta presreće klik i prikazuje sliku u dijalogu. Esc, dugme i tap van slike zatvaraju.
+ */
+import Icon from '../Icon.astro';
+import type { Lang } from '../../config/site';
+import { t } from '../../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<dialog class="zoom-dialog" data-zoom-dialog aria-labelledby="zoom-caption">
+  <figure>
+    <img data-zoom-img alt="" decoding="async" />
+    <figcaption id="zoom-caption" data-zoom-caption></figcaption>
+  </figure>
+  <form method="dialog">
+    <button class="close" type="submit">
+      <Icon name="close" size={22} label={t(lang, 'close')} />
+    </button>
+  </form>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-zoom-dialog]');
+  const img = dialog?.querySelector<HTMLImageElement>('[data-zoom-img]');
+  const caption = dialog?.querySelector<HTMLElement>('[data-zoom-caption]');
+
+  if (dialog && img && caption && typeof dialog.showModal === 'function') {
+    document.addEventListener('click', (event) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>('a[data-zoom]');
+      if (!link || event.metaKey || event.ctrlKey || event.shiftKey) return;
+      event.preventDefault();
+      const name = link.dataset.zoomAlt ?? '';
+      img.src = link.href;
+      img.alt = name;
+      caption.textContent = name;
+      dialog.showModal();
+    });
+
+    // Tap na pozadinu (izvan slike i natpisa) zatvara dijalog.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog || event.target === dialog.querySelector('figure')) dialog.close();
+    });
+
+    dialog.addEventListener('close', () => {
+      img.removeAttribute('src');
+    });
+  }
+</script>
+
+<style>
+  .zoom-dialog {
+    inline-size: 100%;
+    max-inline-size: 100%;
+    block-size: 100%;
+    max-block-size: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .zoom-dialog[open] {
+    display: grid;
+    place-items: center;
+    animation: zoom-in calc(var(--duration) * 1.4) var(--ease);
+  }
+
+  .zoom-dialog::backdrop {
+    background: rgb(0 0 0 / 0.85);
+    backdrop-filter: blur(4px);
+  }
+
+  figure {
+    display: grid;
+    place-items: center;
+    gap: var(--space-3);
+    inline-size: 100%;
+    block-size: 100%;
+    padding: calc(var(--space-7) + env(safe-area-inset-top)) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));
+    align-content: center;
+  }
+
+  img {
+    max-inline-size: min(100%, 960px);
+    max-block-size: 75dvh;
+    inline-size: auto;
+    block-size: auto;
+    border-radius: var(--radius-card);
+    box-shadow: 0 20px 60px rgb(0 0 0 / 0.5);
+  }
+
+  figcaption {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    text-align: center;
+  }
+
+  form {
+    position: absolute;
+    inset-block-start: max(var(--space-3), env(safe-area-inset-top));
+    inset-inline-end: var(--space-3);
+  }
+
+  .close {
+    display: grid;
+    place-items: center;
+    inline-size: var(--tap-min);
+    block-size: var(--tap-min);
+    border: 0;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.15);
+    color: #fff;
+  }
+
+  .close:hover {
+    background: rgb(255 255 255 / 0.28);
+  }
+
+  @keyframes zoom-in {
+    from {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+</style>

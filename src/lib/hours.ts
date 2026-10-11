@@ -107,3 +107,55 @@ export function buildWeekSchedule(entries: readonly WorkingHoursEntry[]): Array<
   }
   return week;
 }
+
+export type OpenStatus =
+  | { state: 'open'; until: number }
+  | { state: 'open24' }
+  | { state: 'closed'; opensAt: number; tomorrow: boolean }
+  | { state: 'closed' }
+  | { state: 'unknown' };
+
+const DAY = 24 * 60;
+
+/**
+ * Status u trenutku `minutes` (0–1439) dana `day` (0 = ponedjeljak).
+ * Intervali jučer/danas/sutra se postave na zajedničku vremensku osu i spoje ako se dodiruju,
+ * pa ispravno rade i "20:00–02:00", "09:00–00:00" i uzastopni intervali ("12:00–16:00, 16:00–23:00").
+ * `schedule` je u formatu iz buildWeekSchedule ili njegovog JSON oblika ([open, close] parovi).
+ */
+export function getOpenStatus(
+  schedule: ReadonlyArray<ReadonlyArray<TimeRange | readonly [number, number]> | null | undefined>,
+  day: number,
+  minutes: number,
+): OpenStatus {
+  if (!schedule.some((d) => d !== null && d !== undefined)) return { state: 'unknown' };
+
+  const intervals: Array<[number, number]> = [];
+  for (const offset of [-1, 0, 1]) {
+    const ranges = schedule[(day + offset + 7) % 7] ?? [];
+    for (const range of ranges) {
+      const [open, close] = Array.isArray(range) ? range : [(range as TimeRange).open, (range as TimeRange).close];
+      const start = offset * DAY + open;
+      const end = offset * DAY + (close <= open ? close + DAY : close);
+      intervals.push([start, end]);
+    }
+  }
+  intervals.sort((a, b) => a[0] - b[0]);
+
+  const merged: Array<[number, number]> = [];
+  for (const [start, end] of intervals) {
+    const last = merged.at(-1);
+    if (last && start <= last[1]) last[1] = Math.max(last[1], end);
+    else merged.push([start, end]);
+  }
+
+  const current = merged.find(([start, end]) => start <= minutes && minutes < end);
+  if (current) {
+    // Bez prekida do kraja sutrašnjeg dana: tretira se kao non-stop.
+    if (current[1] - minutes >= DAY) return { state: 'open24' };
+    return { state: 'open', until: ((current[1] % DAY) + DAY) % DAY };
+  }
+  const next = merged.find(([start]) => start > minutes);
+  if (next) return { state: 'closed', opensAt: next[0] % DAY, tomorrow: next[0] >= DAY };
+  return { state: 'closed' };
+}

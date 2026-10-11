@@ -1,5 +1,9 @@
 ---
-/** Layout stranice menija: tema restorana kao CSS varijable + samo fontovi koje restoran koristi. */
+/**
+ * Layout stranice menija: tema restorana kao CSS varijable + samo fontovi koje restoran koristi.
+ * Ako postoji src/styles/restaurants/<slug>.css, ubacuje se inline samo na stranice tog restorana
+ * (vidi src/styles/restaurants/README.md).
+ */
 import '../styles/menu.css';
 import BaseLayout from './BaseLayout.astro';
 import type { Lang } from '../config/site';
@@ -12,9 +16,21 @@ interface Props {
   lang: Lang;
 }
 
+// ?inline: Vite obradi (minificira) CSS i vrati ga kao string; ništa od ovoga ne ide u zajednički bundle.
+const restaurantStyles = import.meta.glob<string>('../styles/restaurants/*.css', {
+  query: '?inline',
+  import: 'default',
+  eager: true,
+});
+
 const { restaurant, lang } = Astro.props;
 const r = restaurant.data;
 const dark = isDarkTheme(r.theme);
+const bodyId = `restaurant-${restaurant.id}`;
+const rawCss = restaurantStyles[`../styles/restaurants/${restaurant.id}.css`];
+// Omotano u #restaurant-<slug> { … } (CSS nesting): ID daje dovoljnu specifičnost da pobijedi
+// scoped stilove komponenti, a pravila ne mogu "procuriti" na druge stranice.
+const customCss = rawCss ? `#${bodyId}{${rawCss}}` : undefined;
 ---
 
 <BaseLayout
@@ -24,9 +40,11 @@ const dark = isDarkTheme(r.theme);
   fonts={[r.theme.fonts.heading, r.theme.fonts.body]}
   bodyStyle={themeStyle(r.theme)}
   bodyClass={dark ? 'menu-page is-dark' : 'menu-page'}
+  bodyId={bodyId}
   brandInTitle={false}
   themeColor={resolveColors(r.theme).background}
   colorScheme={dark ? 'dark' : 'light'}
 >
+  {customCss && <style slot="head" is:inline data-restaurant-css={restaurant.id} set:html={customCss} />}
   <slot />
 </BaseLayout>

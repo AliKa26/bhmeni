@@ -44,7 +44,7 @@ const hasSchedule = schedule.some((day) => day !== undefined);
   <div class="intro">
     {
       headerStyle !== 'minimal' && r.logo && (
-        <Image src={r.logo} alt={r.name} width={88} densities={[1, 2]} format="webp" class="logo" loading="eager" />
+        <Image src={r.logo} alt={r.name} width={128} densities={[1, 2]} format="webp" class="logo" loading="eager" />
       )
     }
     <h1 class="name">{r.name}</h1>
@@ -59,6 +59,8 @@ const hasSchedule = schedule.some((day) => day !== undefined);
           data-t-open={t('statusOpenUntil')}
           data-t-opens={t('statusOpensAt')}
           data-t-closed={t('statusClosed')}
+          data-t-opens-tomorrow={t('statusOpensTomorrow')}
+          data-t-open24={t('statusOpen24')}
           aria-live="polite"
         >
           <span class="status-dot" aria-hidden="true" />
@@ -100,11 +102,13 @@ const hasSchedule = schedule.some((day) => day !== undefined);
 </header>
 
 <script>
+  import { getOpenStatus } from '../../lib/hours';
+
   // Status "Otvoreno/Zatvoreno" računa se na klijentu, po vremenu u Sarajevu.
   const el = document.querySelector<HTMLElement>('[data-status]');
-  if (el) {
-    type Range = [number, number];
-    const schedule = JSON.parse(el.dataset.schedule ?? '[]') as Array<Range[] | null>;
+  const text = el?.querySelector<HTMLElement>('[data-status-text]');
+  if (el && text) {
+    const schedule = JSON.parse(el.dataset.schedule ?? '[]') as Array<Array<[number, number]> | null>;
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Europe/Sarajevo',
       weekday: 'short',
@@ -114,36 +118,23 @@ const hasSchedule = schedule.some((day) => day !== undefined);
     }).formatToParts(new Date());
     const get = (type: string) => parts.find((p) => p.type === type)?.value ?? '';
     const day = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(get('weekday'));
-    const now = Number(get('hour')) * 60 + Number(get('minute'));
-    const fmt = (m: number) => {
-      const v = m % 1440;
-      return `${String(Math.floor(v / 60)).padStart(2, '0')}:${String(v % 60).padStart(2, '0')}`;
-    };
+    const now = (Number(get('hour')) % 24) * 60 + Number(get('minute'));
+    const fmt = (m: number) => `${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+    const tpl = (key: string, time?: number) => (el.dataset[key] ?? '').replace('{time}', time === undefined ? '' : fmt(time));
 
-    let openUntil: number | undefined;
-    // Danas: interval koji je u toku (zatvaranje iza ponoći se računa kao +24h).
-    for (const [open, close] of schedule[day] ?? []) {
-      const end = close <= open ? close + 1440 : close;
-      if (now >= open && now < end) openUntil = close;
-    }
-    // Jučerašnji interval koji traje iza ponoći.
-    for (const [open, close] of schedule[(day + 6) % 7] ?? []) {
-      if (close <= open && now < close) openUntil = close;
-    }
-    const nextToday = (schedule[day] ?? []).map(([open]) => open).find((open) => open > now);
-
-    const text = el.querySelector<HTMLElement>('[data-status-text]');
-    if (text && day >= 0) {
-      if (openUntil !== undefined) {
-        el.dataset.state = 'open';
-        text.textContent = (el.dataset.tOpen ?? '').replace('{time}', fmt(openUntil));
-      } else if (nextToday !== undefined) {
-        el.dataset.state = 'closed';
-        text.textContent = (el.dataset.tOpens ?? '').replace('{time}', fmt(nextToday));
-      } else {
-        el.dataset.state = 'closed';
-        text.textContent = el.dataset.tClosed ?? '';
-      }
+    const status = day >= 0 ? getOpenStatus(schedule, day, now) : { state: 'unknown' as const };
+    if (status.state === 'open') {
+      el.dataset.state = 'open';
+      text.textContent = tpl('tOpen', status.until);
+    } else if (status.state === 'open24') {
+      el.dataset.state = 'open';
+      text.textContent = tpl('tOpen24');
+    } else if (status.state === 'closed') {
+      el.dataset.state = 'closed';
+      text.textContent =
+        'opensAt' in status ? tpl(status.tomorrow ? 'tOpensTomorrow' : 'tOpens', status.opensAt) : tpl('tClosed');
+    } else {
+      el.remove();
     }
   }
 </script>
@@ -305,6 +296,37 @@ const hasSchedule = schedule.some((day) => day !== undefined);
     text-underline-offset: 0.35em;
   }
 
+  /* Header bez covera: logo u centru, blagi sjaj u bojama teme. */
+  .menu-header--logo {
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 0%, color-mix(in oklab, var(--color-primary) 22%, transparent), transparent 70%),
+      radial-gradient(ellipse 50% 40% at 85% 20%, color-mix(in oklab, var(--color-accent) 12%, transparent), transparent 70%),
+      var(--color-background);
+  }
+
+  .menu-header--logo .intro {
+    justify-items: center;
+    padding-block: var(--space-7) var(--space-6);
+    text-align: center;
+  }
+
+  .menu-header--logo .logo {
+    inline-size: 112px;
+    block-size: 112px;
+    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-background));
+    box-shadow:
+      0 0 0 6px color-mix(in oklab, var(--color-primary) 12%, transparent),
+      var(--shadow-lg);
+  }
+
+  .menu-header--logo .name {
+    font-size: var(--text-4xl);
+  }
+
+  .menu-header--logo .actions {
+    justify-content: center;
+  }
+
   @media (min-width: 640px) {
     .logo {
       inline-size: 104px;
@@ -313,6 +335,11 @@ const hasSchedule = schedule.some((day) => day !== undefined);
 
     .menu-header--cover .logo {
       margin-block-start: calc(-52px - var(--space-2));
+    }
+
+    .menu-header--logo .logo {
+      inline-size: 128px;
+      block-size: 128px;
     }
   }
 </style>

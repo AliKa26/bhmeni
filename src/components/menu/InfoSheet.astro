@@ -150,6 +150,53 @@ const titleId = `${id}-title`;
   const weekday = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Sarajevo', weekday: 'short' }).format(new Date());
   const today = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(weekday);
   document.querySelector(`.hours tr[data-day="${today}"]`)?.classList.add('is-today');
+
+  // Fallback za preglednike bez Popover API-ja (npr. Safari < 17, stariji Android WebView):
+  // popover atributi se uklanjaju, a otvaranje/zatvaranje radi klasa .is-open + vlastita pozadina.
+  if (!('popover' in HTMLElement.prototype)) {
+    document.documentElement.classList.add('no-popover');
+    for (const sheet of document.querySelectorAll<HTMLElement>('.sheet[popover]')) {
+      const id = sheet.id;
+      sheet.removeAttribute('popover');
+      sheet.setAttribute('aria-modal', 'true');
+      sheet.tabIndex = -1;
+
+      const backdrop = document.createElement('div');
+      backdrop.className = 'sheet-backdrop';
+      backdrop.hidden = true;
+      sheet.before(backdrop);
+
+      let opener: HTMLElement | null = null;
+      const close = () => {
+        sheet.classList.remove('is-open');
+        backdrop.hidden = true;
+        document.removeEventListener('keydown', onKey);
+        opener?.focus();
+      };
+      const onKey = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') close();
+      };
+      const open = (trigger: HTMLElement) => {
+        opener = trigger;
+        backdrop.hidden = false;
+        sheet.classList.add('is-open');
+        document.addEventListener('keydown', onKey);
+        sheet.querySelector<HTMLElement>('.close')?.focus();
+      };
+
+      for (const trigger of document.querySelectorAll<HTMLElement>(`[popovertarget="${id}"]`)) {
+        const action = trigger.getAttribute('popovertargetaction');
+        trigger.removeAttribute('popovertarget');
+        trigger.removeAttribute('popovertargetaction');
+        trigger.setAttribute('aria-controls', id);
+        trigger.addEventListener('click', () => {
+          if (action === 'hide' || sheet.classList.contains('is-open')) close();
+          else open(trigger);
+        });
+      }
+      backdrop.addEventListener('click', close);
+    }
+  }
 </script>
 
 <style>
@@ -373,6 +420,25 @@ const titleId = `${id}-title`;
 
   .hours tr:global(.is-today) .today-tag {
     display: inline-block;
+  }
+
+  /* Fallback bez Popover API-ja (klasa no-popover i .is-open postavlja skripta). */
+  :global(.no-popover) .sheet {
+    z-index: 1000;
+    visibility: hidden;
+  }
+
+  :global(.no-popover) .sheet:global(.is-open) {
+    visibility: visible;
+    translate: 0 0;
+    opacity: 1;
+  }
+
+  :global(.sheet-backdrop) {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgb(0 0 0 / 0.45);
   }
 
   @media (min-width: 640px) {

@@ -20,6 +20,7 @@ interface Props {
   /** Inline CSS varijable na <body> (tema restorana). */
   bodyStyle?: string;
   bodyClass?: string;
+  bodyId?: string;
   /** false = naslov bez " · BHMeni" (meniji: brend je skoro nevidljiv). */
   brandInTitle?: boolean;
   /** <meta name="theme-color"> (boja trake preglednika na mobitelu). */
@@ -35,6 +36,7 @@ const {
   fonts = [BRAND_FONTS.heading, BRAND_FONTS.body],
   bodyStyle,
   bodyClass,
+  bodyId,
   brandInTitle = true,
   themeColor,
   colorScheme = 'light',
@@ -63,7 +65,7 @@ const [preloadFont] = fonts;
     <style is:inline set:html={fontFaceCss(fonts)} />
     <slot name="head" />
   </head>
-  <body style={bodyStyle} class={bodyClass}>
+  <body style={bodyStyle} class={bodyClass} id={bodyId}>
     <a class="skip-link" href="#main">{t(lang, 'skipToContent')}</a>
     <slot />
   </body>

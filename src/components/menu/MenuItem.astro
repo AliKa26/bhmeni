@@ -1,13 +1,21 @@
 ---
 /**
- * Jedno jelo. Trenutno je implementiran samo layout "cards" (slika gore);
- * "list", "compact" i "photo-grid" dolaze u sljedećem koraku i do tada koriste cards.
- * data-* atributi su tu za filtere u meniju (sljedeći korak).
+ * Jedno jelo u jednom od layouta iz theme.layout:
+ * - cards:      slika 4:3 gore, puni opis
+ * - list:       mala kvadratna slika na početku reda, tekst pored
+ * - compact:    bez slika, gust tekst s tačkastim vodičem do cijene
+ * - photo-grid: dvije kolone velikih kvadratnih slika, kratak opis
+ * ("custom" je rezerviran za poseban Astro layout po restoranu; do tada se prikazuje kao cards.)
+ *
+ * data-* atributi služe filterima u meniju (MenuFilters), a link oko slike otvara <dialog> s uvećanom slikom
+ * (bez JS-a link jednostavno otvara sliku).
  */
-import { Image } from 'astro:assets';
+import { getImage, Image } from 'astro:assets';
 import type { Lang } from '../../config/site';
+import type { MenuLayout } from '../../config/themes';
 import { formatPrice, localize, useTranslations } from '../../i18n/utils';
 import type { MenuItem as MenuItemData } from '../../lib/restaurants';
+import { normalizeSearch } from '../../lib/search';
 
 interface TaxonomyEntry {
   icon: string;
@@ -18,11 +26,13 @@ interface Props {
   item: MenuItemData;
   lang: Lang;
   currency: 'KM' | 'EUR';
+  layout: MenuLayout;
   tags: Map<string, TaxonomyEntry>;
   allergens: Map<string, TaxonomyEntry>;
 }
 
 const { item, lang, currency, tags, allergens } = Astro.props;
+const layout: Exclude<MenuLayout, 'custom'> = Astro.props.layout === 'custom' ? 'cards' : Astro.props.layout;
 const t = useTranslations(lang);
 const name = localize(item.name, lang);
 const description = localize(item.description, lang);
@@ -35,41 +45,86 @@ const allergenNames = item.allergens.flatMap((id) => {
   return allergen ? [localize(allergen.name, lang)] : [];
 });
 const initial = name.charAt(0);
+
+// Tekst po kojem se pretražuje: naziv i opis na jeziku stranice + bosanski naziv (gosti često znaju "ćevapi").
+const searchText = normalizeSearch([name, description, item.name.bs].join(' '));
+
+const IMAGE_OPTIONS = {
+  cards: {
+    widths: [320, 640],
+    sizes: '(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw',
+  },
+  list: {
+    widths: [160, 320],
+    sizes: '96px',
+  },
+  'photo-grid': {
+    widths: [320, 640],
+    sizes: '(min-width: 1024px) 290px, (min-width: 640px) 33vw, 50vw',
+  },
+} as const;
+
+const showImage = layout !== 'compact';
+const imageOptions = layout === 'compact' ? undefined : IMAGE_OPTIONS[layout];
+const zoom =
+  showImage && item.image
+    ? await getImage({ src: item.image, width: Math.min(1200, item.image.width), format: 'webp', quality: 80 })
+    : undefined;
 ---
 
 <article
-  class:list={['item', 'item--cards', { 'is-unavailable': !item.available }]}
+  class:list={['item', `item--${layout}`, { 'is-unavailable': !item.available }]}
   id={`jelo-${item.id}`}
   data-item
+  data-search={searchText}
   data-tags={item.tags.join(' ')}
   data-allergens={item.allergens.join(' ')}
 >
-  <div class="media">
-    {
-      item.image ? (
-        <Image
-          src={item.image}
-          alt={name}
-          widths={[320, 640]}
-          sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
-          format="webp"
-          quality={74}
-          class="photo"
-        />
-      ) : (
-        <div class="placeholder" aria-hidden="true">
-          <span>{initial}</span>
-        </div>
-      )
-    }
-    {item.badge && <span class:list={['badge', `badge--${item.badge}`]}>{t(`badge.${item.badge}` as const)}</span>}
-  </div>
+  {
+    showImage && imageOptions && (
+      <div class="media">
+        {item.image && zoom ? (
+          <a
+            class="zoom"
+            href={zoom.src}
+            data-zoom
+            data-zoom-alt={name}
+            aria-label={t('zoomImage', { name })}
+          >
+            <Image
+              src={item.image}
+              alt={name}
+              widths={[...imageOptions.widths]}
+              sizes={imageOptions.sizes}
+              format="webp"
+              quality={74}
+              class="photo"
+            />
+          </a>
+        ) : (
+          <div class="placeholder" aria-hidden="true">
+            <span>{initial}</span>
+          </div>
+        )}
+        {item.badge && layout !== 'list' && (
+          <span class:list={['badge', `badge--${item.badge}`]}>{t(`badge.${item.badge}` as const)}</span>
+        )}
+      </div>
+    )
+  }
 
   <div class="body">
     <div class="title-row">
       <h3 class="name">{name}</h3>
+      {layout === 'compact' && item.price !== undefined && <span class="leader" aria-hidden="true" />}
       {item.price !== undefined && <p class="price">{formatPrice(item.price, currency, lang)}</p>}
     </div>
+
+    {
+      item.badge && (layout === 'list' || layout === 'compact') && (
+        <span class:list={['badge', 'badge--inline', `badge--${item.badge}`]}>{t(`badge.${item.badge}` as const)}</span>
+      )
+    }
 
     <p class="description">{description}</p>
 
@@ -91,9 +146,9 @@ const initial = name.charAt(0);
       itemTags.length > 0 && (
         <ul class="tags">
           {itemTags.map((tag) => (
-            <li class="tag">
+            <li class="tag" title={tag.name}>
               <span aria-hidden="true">{tag.icon}</span>
-              {tag.name}
+              <span class="tag-name">{tag.name}</span>
             </li>
           ))}
         </ul>
@@ -113,27 +168,35 @@ const initial = name.charAt(0);
 </article>
 
 <style>
+  /* ---------- Zajedničko ---------- */
   .item {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: var(--radius-card);
-    background: var(--color-surface);
-    box-shadow:
-      0 0 0 1px var(--color-border),
-      var(--shadow-sm);
+    position: relative;
+    min-inline-size: 0;
   }
 
   .media {
     position: relative;
-    aspect-ratio: 4 / 3;
+    overflow: hidden;
     background: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface));
+  }
+
+  .zoom {
+    display: block;
+    block-size: 100%;
+    cursor: zoom-in;
   }
 
   .photo {
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
+    transition: scale calc(var(--duration) * 2) var(--ease);
+  }
+
+  @media (hover: hover) {
+    .zoom:hover .photo {
+      scale: 1.04;
+    }
   }
 
   .placeholder {
@@ -162,9 +225,12 @@ const initial = name.charAt(0);
     border-radius: var(--radius-pill);
     background: var(--color-surface);
     color: var(--color-text);
+    font-family: var(--font-body);
     font-size: var(--text-xs);
     font-weight: 600;
+    letter-spacing: 0;
     box-shadow: var(--shadow-md);
+    pointer-events: none;
   }
 
   .badge--popular,
@@ -173,11 +239,24 @@ const initial = name.charAt(0);
     color: var(--color-on-primary);
   }
 
+  .badge--inline {
+    position: static;
+    align-self: flex-start;
+    padding: 0.15em 0.6em;
+    box-shadow: none;
+    border: 1px solid var(--color-border);
+  }
+
+  .badge--inline.badge--popular,
+  .badge--inline.badge--sale {
+    border-color: transparent;
+  }
+
   .body {
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-    padding: var(--space-4) var(--space-4) var(--space-5);
+    min-inline-size: 0;
   }
 
   .title-row {
@@ -274,5 +353,173 @@ const initial = name.charAt(0);
     background: color-mix(in oklab, var(--color-text) 8%, transparent);
     font-size: var(--text-xs);
     font-weight: 600;
+  }
+
+  /* ---------- cards ---------- */
+  .item--cards {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow:
+      0 0 0 1px var(--color-border),
+      var(--shadow-sm);
+  }
+
+  .item--cards .media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .item--cards .body {
+    padding: var(--space-4) var(--space-4) var(--space-5);
+  }
+
+  /* ---------- list ---------- */
+  .item--list {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    align-items: start;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  .item--list .media {
+    aspect-ratio: 1;
+    border-radius: calc(var(--radius-card) * 0.75);
+  }
+
+  .item--list .placeholder span {
+    font-size: 2rem;
+  }
+
+  .item--list .body {
+    gap: var(--space-1);
+  }
+
+  .item--list .name {
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  .item--list .tags {
+    gap: var(--space-1);
+  }
+
+  /* ---------- compact ---------- */
+  .item--compact {
+    padding-block: var(--space-3);
+    border-block-end: 1px dashed var(--color-border);
+  }
+
+  .item--compact .body {
+    gap: var(--space-1);
+  }
+
+  .item--compact .title-row {
+    justify-content: flex-start;
+    gap: var(--space-2);
+  }
+
+  .item--compact .name {
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  .item--compact .description {
+    font-size: var(--text-xs);
+  }
+
+  .item--compact .tags {
+    margin-block-start: 0;
+  }
+
+  .item--compact .tag {
+    padding: 0;
+    background: none;
+  }
+
+  .item--compact .tag-name {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  /* ---------- photo-grid ---------- */
+  .item--photo-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .item--photo-grid .media {
+    aspect-ratio: 1;
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-md);
+  }
+
+  .item--photo-grid .placeholder span {
+    font-size: 2.75rem;
+  }
+
+  .item--photo-grid .badge {
+    inset-block-start: var(--space-2);
+    inset-inline-start: var(--space-2);
+  }
+
+  .item--photo-grid .body {
+    gap: var(--space-1);
+    padding-inline: var(--space-1);
+  }
+
+  .item--photo-grid .title-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .item--photo-grid .name {
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .item--photo-grid .description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    font-size: var(--text-xs);
+  }
+
+  .item--photo-grid .variants {
+    font-size: var(--text-xs);
+  }
+
+  .item--photo-grid .tag {
+    padding: 0.15em 0.35em;
+  }
+
+  .item--photo-grid .tag-name {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  @media (min-width: 640px) {
+    .item--photo-grid .name {
+      font-size: var(--text-lg);
+    }
+
+    .item--photo-grid .description {
+      font-size: var(--text-sm);
+    }
   }
 </style>

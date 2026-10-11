@@ -2,7 +2,9 @@
 /** Cijela stranica menija za jedan restoran i jezik (dijele je [slug]/index i [slug]/[lang]). */
 import MenuLayout from '../../layouts/MenuLayout.astro';
 import CategoryNav from './CategoryNav.astro';
+import ImageDialog from './ImageDialog.astro';
 import InfoSheet from './InfoSheet.astro';
+import MenuFilters from './MenuFilters.astro';
 import MenuFooter from './MenuFooter.astro';
 import MenuHeader from './MenuHeader.astro';
 import MenuItem from './MenuItem.astro';
@@ -18,6 +20,7 @@ interface Props {
 
 const { restaurant, menu, lang } = Astro.props;
 const r = restaurant.data;
+const layout = r.theme.layout === 'custom' ? 'cards' : r.theme.layout;
 const { tags, allergens } = await getTaxonomies();
 const infoSheetId = 'info';
 
@@ -29,32 +32,54 @@ const categories = menu.data.categories
     items: category.items.filter((item) => item.available || UNAVAILABLE_ITEMS === 'show'),
   }))
   .filter((category) => category.items.length > 0);
+
+// Filteri nude samo tagove i alergene koji se stvarno pojavljuju u ovom meniju (redoslijed iz taksonomije).
+const allItems = categories.flatMap((c) => c.items);
+const usedTags = new Set(allItems.flatMap((i) => i.tags));
+const usedAllergens = new Set(allItems.flatMap((i) => i.allergens));
+const tagOptions = [...tags].filter(([id]) => usedTags.has(id)).map(([, data]) => data);
+const allergenOptions = [...allergens].filter(([id]) => usedAllergens.has(id)).map(([, data]) => data);
 ---
 
 <MenuLayout restaurant={restaurant} lang={lang}>
   <MenuHeader restaurant={restaurant} lang={lang} infoSheetId={infoSheetId} />
   <CategoryNav label={t(lang, 'categories')} categories={categories} />
 
-  <main id="main" class="menu" data-layout={r.theme.layout}>
+  <main id="main" class="menu" data-layout={layout}>
+    <MenuFilters lang={lang} tags={tagOptions} allergens={allergenOptions} />
+
     {
       categories.map((category) => (
-        <section class="category" id={category.anchor} aria-labelledby={`${category.anchor}-h`}>
+        <section class="category" id={category.anchor} data-category aria-labelledby={`${category.anchor}-h`}>
           <header class="category-head">
             <h2 id={`${category.anchor}-h`}>{category.name}</h2>
             {category.description && <p>{category.description}</p>}
           </header>
           <div class="grid">
             {category.items.map((item) => (
-              <MenuItem item={item} lang={lang} currency={r.currency} tags={tags} allergens={allergens} />
+              <MenuItem
+                item={item}
+                lang={lang}
+                currency={r.currency}
+                layout={layout}
+                tags={tags}
+                allergens={allergens}
+              />
             ))}
           </div>
         </section>
       ))
     }
+
+    <div class="empty" data-filter-empty hidden>
+      <p>{t(lang, 'noResults')}</p>
+      <button type="button" class="empty-clear" data-filter-clear>{t(lang, 'clearFilters')}</button>
+    </div>
   </main>
 
   <MenuFooter lang={lang} showPoweredBy={r.showPoweredBy} />
   <InfoSheet id={infoSheetId} restaurant={restaurant} lang={lang} />
+  <ImageDialog lang={lang} />
 </MenuLayout>
 
 <style>
@@ -63,7 +88,12 @@ const categories = menu.data.categories
     gap: var(--space-7);
     max-inline-size: var(--content-max);
     margin-inline: auto;
-    padding: var(--space-6) var(--gutter) var(--space-4);
+    padding: var(--space-5) var(--gutter) var(--space-4);
+  }
+
+  /* Filteri su bliže prvoj kategoriji nego što su kategorije jedna drugoj. */
+  .menu > :global([data-filters]) {
+    margin-block-end: calc(var(--space-5) - var(--space-7));
   }
 
   .category {
@@ -108,16 +138,72 @@ const categories = menu.data.categories
     gap: var(--space-4);
   }
 
+  /* list i compact: redovi s linijama između, bez razmaka (linije daje sama stavka). */
+  [data-layout='list'] .grid,
+  [data-layout='compact'] .grid {
+    gap: 0 var(--space-7);
+  }
+
+  [data-layout='list'] .category-head,
+  [data-layout='compact'] .category-head {
+    margin-block-end: var(--space-1);
+  }
+
+  [data-layout='photo-grid'] .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5) var(--space-3);
+  }
+
+  .empty {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    padding: var(--space-7) var(--space-4);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-card);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  .empty-clear {
+    min-block-size: var(--tap-min);
+    padding-inline: var(--space-5);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font-weight: 600;
+  }
+
   @media (min-width: 640px) {
-    .grid {
+    [data-layout='cards'] .grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--space-5);
+    }
+
+    [data-layout='photo-grid'] .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-6) var(--space-4);
+    }
+  }
+
+  @media (min-width: 768px) {
+    [data-layout='compact'] .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (min-width: 1024px) {
-    .grid {
+    [data-layout='cards'] .grid {
       grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    [data-layout='list'] .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    [data-layout='photo-grid'] .grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 </style>

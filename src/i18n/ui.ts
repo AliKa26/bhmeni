@@ -22,6 +22,8 @@ const bs = {
   statusOpenUntil: 'Otvoreno · do {time}',
   statusOpensAt: 'Zatvoreno · otvara u {time}',
   statusClosed: 'Zatvoreno',
+  statusOpensTomorrow: 'Zatvoreno · otvara sutra u {time}',
+  statusOpen24: 'Otvoreno 24 sata',
   categories: 'Kategorije menija',
   language: 'Jezik',
   allergens: 'Alergeni',
@@ -32,6 +34,17 @@ const bs = {
   'badge.sale': 'Akcija',
   poweredBy: 'Powered by',
   allRestaurants: 'Svi restorani',
+  searchLabel: 'Pretraži meni',
+  searchPlaceholder: 'Pretraži jela…',
+  filterTags: 'Prikaži samo',
+  filterAllergens: 'Sakrij jela sa',
+  filters: 'Filteri',
+  clearFilters: 'Poništi filtere',
+  noResults: 'Nema jela koja odgovaraju pretrazi ili filterima.',
+  'results.one': '{n} jelo',
+  'results.few': '{n} jela',
+  'results.other': '{n} jela',
+  zoomImage: 'Uvećaj sliku: {name}',
 } as const;
 
 export type UiKey = keyof typeof bs;
@@ -54,6 +67,8 @@ const en: Partial<Record<UiKey, string>> = {
   statusOpenUntil: 'Open · until {time}',
   statusOpensAt: 'Closed · opens at {time}',
   statusClosed: 'Closed',
+  statusOpensTomorrow: 'Closed · opens tomorrow at {time}',
+  statusOpen24: 'Open 24 hours',
   categories: 'Menu categories',
   language: 'Language',
   allergens: 'Allergens',
@@ -64,6 +79,16 @@ const en: Partial<Record<UiKey, string>> = {
   'badge.sale': 'On sale',
   poweredBy: 'Powered by',
   allRestaurants: 'All restaurants',
+  searchLabel: 'Search the menu',
+  searchPlaceholder: 'Search dishes…',
+  filterTags: 'Show only',
+  filterAllergens: 'Hide dishes with',
+  filters: 'Filters',
+  clearFilters: 'Clear filters',
+  noResults: 'No dishes match your search or filters.',
+  'results.one': '{n} dish',
+  'results.other': '{n} dishes',
+  zoomImage: 'Enlarge image: {name}',
 };
 
 export const ui: { bs: Record<UiKey, string> } & Partial<Record<Lang, Partial<Record<UiKey, string>>>> = {

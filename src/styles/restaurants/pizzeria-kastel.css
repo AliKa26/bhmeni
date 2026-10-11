@@ -1,0 +1,42 @@
+/*
+ * Pizzeria Kastel: noćna picerija. Detalji koje tema ne pokriva.
+ * Pravila se automatski omotaju u #restaurant-pizzeria-kastel { … } (vidi README.md).
+ */
+
+/* Naslovi kategorija kao natpisi na tabli: verzal, razmaknuta slova, narandžasta linija. */
+.category-head h2 {
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.category-head h2::after {
+  block-size: 1px;
+  background: linear-gradient(
+    to var(--line-dir, right),
+    color-mix(in oklab, var(--color-primary) 60%, transparent),
+    transparent
+  );
+}
+
+/* Toplo "svjetlo iz peći" oko loga u headeru. */
+.menu-header--logo .logo {
+  box-shadow:
+    0 0 0 6px color-mix(in oklab, var(--color-primary) 18%, transparent),
+    0 0 64px 12px color-mix(in oklab, var(--color-primary) 32%, transparent);
+}
+
+.menu-header--logo .name {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Fotografije jela: tanki topli rub. */
+.item--photo-grid .media {
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-primary) 25%, transparent),
+    var(--shadow-md);
+}
